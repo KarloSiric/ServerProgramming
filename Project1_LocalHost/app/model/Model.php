@@ -38,20 +38,19 @@ class Model {
     private function connect(): void {
         if ($this->connection == null) {
             try {
-                // Load config file
                 $config = parse_ini_file(__DIR__ . '/../config/config.ini', true);
                 
                 $this->connection = new PDO(
-                        $config['db']['dsn'],
-                        $config['db']['username'],
-                        $config['db']['password'],
-                        $this->settings);
+                    $config['db']['dsn'],
+                    $config['db']['username'],
+                    $config['db']['password'],
+                    $this->settings
+                );
             } catch (PDOException $e) {
                 throw new PDOException($e->getMessage(), (int) $e->getCode());
             }
         }
-    }
-
+    }    
     /**
      * Executes a query and returns the PDOStatement object.
      *

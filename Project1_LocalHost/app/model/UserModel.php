@@ -56,7 +56,7 @@ class UserModel extends Model {
         if ($username === '') {
             return null;
         }
-        
+    
         // Query database for user by username or email
         $query = "SELECT * FROM users WHERE username = ? OR email = ?";
         $user = $this->fetchOne($query, [$username, $username]);
@@ -70,9 +70,9 @@ class UserModel extends Model {
                 'name' => $user['name'],
             ];
         }
-        
+    
         return null;
-    }
+    }   
 
     /**
      * Creates a new user in the database
