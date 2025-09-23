@@ -1,7 +1,7 @@
 <?php
 // Clean regex router based on your friend's approach
 final class Router {
-    private string $pattern = "/^(?<controller>[a-z]+)\/(?<action>[a-z]+)(?<params>[\/\d+]*)\/?$/";
+    private string $pattern = "/^(?<controller>[a-z]+)\/(?<action>[a-z]+)(?<params>[\/.\w-]*)*\/?$/i";
     private string $controller = "UserController";  // Default to user dashboard like your app
     private string $action = "dashboard";           // Logical default for your event system
     private array $params = [];

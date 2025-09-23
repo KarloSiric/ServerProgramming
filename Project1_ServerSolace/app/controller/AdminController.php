@@ -91,4 +91,60 @@ class AdminController extends Controller
             'user' => $this->userOrNull()
         ]); 
     }
+    
+    // Process user management actions (activate, deactivate, delete)
+    public function userAction($params = []) {
+        $this->requireRole('admin');
+        
+        $action = $params[0] ?? '';
+        $userId = $params[1] ?? '';
+        
+        if (empty($action) || empty($userId)) {
+            $_SESSION['flash_error'] = 'Invalid user action.';
+            $this->redirect('admin/users');
+            return;
+        }
+        
+        // In a real app, this would interact with the database
+        switch ($action) {
+            case 'activate':
+                $_SESSION['flash_success'] = "User {$userId} activated successfully! (Demo mode)";
+                break;
+            case 'deactivate':
+                $_SESSION['flash_success'] = "User {$userId} deactivated successfully! (Demo mode)";
+                break;
+            case 'delete':
+                $_SESSION['flash_success'] = "User {$userId} deleted successfully! (Demo mode)";
+                break;
+            default:
+                $_SESSION['flash_error'] = 'Unknown user action.';
+        }
+        
+        $this->redirect('admin/users');
+    }
+    
+    // Handle AJAX requests for dynamic admin interface updates
+    public function ajax($params = []) {
+        $this->requireRole('admin');
+        
+        $action = $params[0] ?? '';
+        
+        header('Content-Type: application/json');
+        
+        switch ($action) {
+            case 'stats':
+                // Return mock real-time statistics
+                echo json_encode([
+                    'events' => rand(15, 25),
+                    'users' => rand(150, 300),
+                    'registrations' => rand(45, 120),
+                    'revenue' => '$' . number_format(rand(15000, 45000))
+                ]);
+                break;
+                
+            default:
+                echo json_encode(['error' => 'Unknown AJAX action']);
+        }
+        exit;
+    }
 }

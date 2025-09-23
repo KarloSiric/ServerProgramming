@@ -11,13 +11,13 @@ class Controller
         if (!class_exists($modelName)) {
             // Map to your existing models based on controller type
             switch (true) {
-                case str_contains(get_class($this), 'Event'):
+                case strpos(get_class($this), 'Event') !== false:
                     $modelName = 'EventModel';
                     break;
-                case str_contains(get_class($this), 'User'):
+                case strpos(get_class($this), 'User') !== false:
                     $modelName = 'UserModel';
                     break;
-                case str_contains(get_class($this), 'Venue'):
+                case strpos(get_class($this), 'Venue') !== false:
                     $modelName = 'VenueModel';
                     break;
                 default:

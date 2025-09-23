@@ -14,14 +14,16 @@ class EventController extends Controller
     // Event detail view - auto-resolves to app/view/event/view.php
     public function view($params = []) { 
         $this->requireLogin(); 
+        
         $id = (int)($params[0] ?? $_GET['id'] ?? 0);
         
         $model = $this->model();
         $event = $model->getEventById($id);
         
         if (!$event) {
-            $_SESSION['flash_error'] = 'Event not found.';
+            $_SESSION['flash_error'] = 'Event not found. ID was: ' . $id;
             $this->redirect('user/dashboard');
+            return;
         }
         
         $this->view([
@@ -42,10 +44,11 @@ class EventController extends Controller
         if (!$event) {
             $_SESSION['flash_error'] = 'Event not found.';
             $this->redirect('user/dashboard');
+            return;
         }
         
         // In a real app, this would add to registrations table
-        $_SESSION['flash_success'] = 'Successfully registered for ' . $event['name'] . '!';
+        $_SESSION['flash_success'] = 'Successfully registered for ' . htmlspecialchars($event['name']) . '!';
         $this->redirect('user/dashboard');
     }
     
@@ -73,6 +76,7 @@ class EventController extends Controller
             if (!$event) {
                 $_SESSION['flash_error'] = 'Event not found.';
                 $this->redirect('admin/events');
+                return;
             }
         }
         
@@ -83,44 +87,86 @@ class EventController extends Controller
         ]);
     }
     
-    // Admin: Process event creation/editing
+    // Admin: UNIFIED method to handle both event creation and editing
     public function store() {
         $this->requireRole('admin');
+        
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('admin/events');
+            return;
+        }
         
         $name = trim($_POST['name'] ?? '');
         $description = trim($_POST['description'] ?? '');
         $date = $_POST['date'] ?? '';
         $venue_id = (int)($_POST['venue_id'] ?? 0);
+        $id = (int)($_POST['id'] ?? 0); // For editing existing events
         
+        // Basic validation
         if (empty($name) || empty($description) || empty($date) || $venue_id === 0) {
             $_SESSION['flash_error'] = 'All fields are required.';
-            $this->redirect('event/create');
+            
+            if ($id > 0) {
+                $this->redirect('event/edit/' . $id);
+            } else {
+                $this->redirect('event/create');
+            }
+            return;
         }
         
         $model = $this->model();
-        $success = $model->createEvent($name, $description, $date, $venue_id);
         
-        if ($success) {
-            $_SESSION['flash_success'] = 'Event created successfully!';
-            $this->redirect('admin/events');
+        if ($id > 0) {
+            // Editing existing event - simulate success for demo
+            $_SESSION['flash_success'] = 'Event "' . htmlspecialchars($name) . '" updated successfully! (Demo mode)';
         } else {
-            $_SESSION['flash_error'] = 'Failed to create event.';
-            $this->redirect('event/create');
+            // Creating new event - use existing createEvent method
+            $success = $model->createEvent($name, $description, $date, $venue_id, [
+                'type' => $_POST['type'] ?? 'conference',
+                'time' => $_POST['time'] ?? '9:00 AM',
+                'end_time' => $_POST['end_time'] ?? '5:00 PM',
+                'price' => (int)($_POST['price'] ?? 199),
+                'organizer' => $_POST['organizer'] ?? 'Event Foundation'
+            ]);
+            
+            if ($success) {
+                $_SESSION['flash_success'] = 'Event "' . htmlspecialchars($name) . '" created successfully!';
+            } else {
+                $_SESSION['flash_error'] = 'Failed to create event. Please try again.';
+            }
         }
+        
+        $this->redirect('admin/events');
     }
     
-    // Admin: Delete event (demo mode)
+    // Admin: Delete event
     public function delete($params = []) {
         $this->requireRole('admin');
         $id = (int)($params[0] ?? $_GET['id'] ?? 0);
         
-        if ($id) {
+        if ($id > 0) {
             // In a real app, this would call model->deleteEvent($id)
-            $_SESSION['flash_success'] = 'Event deleted successfully (demo mode)!';
+            $_SESSION['flash_success'] = 'Event deleted successfully! (Demo mode)';
         } else {
             $_SESSION['flash_error'] = 'Invalid event ID.';
         }
         
+        $this->redirect('admin/events');
+    }
+    
+    // Admin: Toggle event status (active/inactive)
+    public function toggle($params = []) {
+        $this->requireRole('admin');
+        $id = (int)($params[0] ?? $_GET['id'] ?? 0);
+        
+        if ($id === 0) {
+            $_SESSION['flash_error'] = 'Invalid event ID.';
+            $this->redirect('admin/events');
+            return;
+        }
+        
+        // In a real app, this would call model->toggleEventStatus($id)
+        $_SESSION['flash_success'] = 'Event status updated successfully! (Demo mode)';
         $this->redirect('admin/events');
     }
 }

@@ -14,14 +14,13 @@ final class Index {
     }
 
     private static function init() {
-        // Force error display for debugging
-        ini_set('display_errors', 1);
-        error_reporting(E_ALL);
-        
         // Start session if needed
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
+        
+        // Set appropriate error reporting for production
+        error_reporting(E_ERROR | E_STRICT);
 
         // Define application constants
         define('PROJECT_URL', 'https://' . $_SERVER['HTTP_HOST'] . pathinfo($_SERVER['SCRIPT_NAME'], PATHINFO_DIRNAME));
@@ -54,10 +53,10 @@ final class Index {
 
     private static function handle() {
         try {
-            // Get the query string, but handle empty/null cases
+            // Get the query string, handle empty/null cases
             $queryString = $_SERVER["QUERY_STRING"] ?? '';
             
-            // If no query string is provided, redirect to a sensible default
+            // If no query string is provided, redirect to appropriate default
             if (empty($queryString)) {
                 // Check if user is already logged in
                 if (isset($_SESSION['user'])) {
@@ -80,11 +79,9 @@ final class Index {
             $router->dispatch($queryString);
             
         } catch (Exception $e) {
-            // Show detailed error information for debugging
             self::showError($e->getMessage(), $e);
         } catch (Error $e) {
-            // Handle fatal errors that might occur
-            self::showError("Fatal Error: " . $e->getMessage(), $e);
+            self::showError("System Error: " . $e->getMessage(), $e);
         }
     }
     
@@ -96,26 +93,23 @@ final class Index {
         echo "body{font-family:Arial,sans-serif;margin:40px;background:#f8f9fa;}";
         echo ".error{background:#f8d7da;border:1px solid #f5c6cb;padding:20px;border-radius:8px;color:#721c24;}";
         echo ".debug{background:#fff3cd;border:1px solid #ffeaa7;padding:15px;border-radius:8px;color:#856404;margin-top:15px;}";
-        echo "pre{background:#f8f9fa;padding:10px;border-radius:4px;overflow-x:auto;}";
         echo "</style></head><body>";
         echo "<h1>EventHorizon - System Error</h1>";
         echo "<div class='error'><strong>Error:</strong> " . htmlspecialchars($message) . "</div>";
         
-        // Show debug information if we have an exception
-        if ($exception && method_exists($exception, 'getFile')) {
+        // Show debug information only in development
+        if ($exception && isset($_GET['debug'])) {
             echo "<div class='debug'>";
             echo "<strong>Debug Information:</strong><br>";
             echo "<strong>File:</strong> " . htmlspecialchars($exception->getFile()) . "<br>";
             echo "<strong>Line:</strong> " . $exception->getLine() . "<br>";
-            echo "<strong>Stack Trace:</strong><br>";
-            echo "<pre>" . htmlspecialchars($exception->getTraceAsString()) . "</pre>";
             echo "</div>";
         }
         
-        echo "<p><a href='?user/login'>← Return to Login</a> | <a href='/~ks9700/iste-341/Project1/diagnostic.php'>Run Diagnostic</a></p>";
+        echo "<p><a href='?user/login'>← Return to Login</a></p>";
         echo "</body></html>";
     }
 }
 
-// Run the application
+// Bootstrap the application
 Index::run();

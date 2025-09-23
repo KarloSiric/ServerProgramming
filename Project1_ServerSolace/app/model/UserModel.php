@@ -138,4 +138,36 @@ class UserModel extends Model
             ],
         ];
     }
+    
+    // Bridge method to access events - in a real app this would be through proper relationships
+    public function getAllEvents(): array
+    {
+        // Load EventModel to get the actual event data
+        $eventModel = new EventModel();
+        return $eventModel->getAllEvents();
+    }
+    
+    // User management methods for admin functionality
+    public function setUserStatus(string $username, string $status): bool
+    {
+        if (!isset($this->users[$username])) {
+            return false;
+        }
+        
+        // In a real app, this would update the database
+        // For demo purposes, we'll just return true
+        return true;
+    }
+    
+    public function deleteUser(string $username): bool
+    {
+        if (!isset($this->users[$username])) {
+            return false;
+        }
+        
+        // In a real app, this would delete from database
+        // For demo purposes, we'll simulate deletion
+        unset($this->users[$username]);
+        return true;
+    }
 }
