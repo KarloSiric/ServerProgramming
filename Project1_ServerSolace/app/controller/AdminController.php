@@ -1,125 +1,94 @@
 <?php
-// AdminController.php - Comprehensive admin console
+// Admin endpoints with role-gated access - following your friend's clean pattern
 class AdminController extends Controller
 {
-    private UserModel $userModel;
-    private EventModel $eventModel;
-    private VenueModel $venueModel;
-    
-    public function __construct()
-    {
-        $this->userModel = new UserModel();
-        $this->eventModel = new EventModel();
-        $this->venueModel = new VenueModel();
+    // Main admin dashboard - auto-resolves to app/view/admin/overview.php
+    public function overview() { 
+        $this->requireRole('admin'); 
+        $this->view([
+            'title' => 'Admin Dashboard - EventHorizon',
+            'user' => $this->userOrNull()
+        ]); 
     }
     
-    // GET /admin/overview - Main admin dashboard
-    public function overview(): void
-    {
-        $this->requireAdmin();
-        
-        $this->render('admin/overview.php', [
-            'title' => 'Overview - EventHorizon Admin Console',
-            'user' => $this->userOrNull(),
-        ]);
+    // Event management page - auto-resolves to app/view/admin/events.php
+    public function events() { 
+        $this->requireRole('admin'); 
+        $this->view([
+            'title' => 'Event Management - EventHorizon Admin',
+            'user' => $this->userOrNull()
+        ]); 
     }
     
-    // GET /admin/events - Event management
-    public function events(): void
-    {
-        $this->requireAdmin();
-        
-        $this->render('admin/events.php', [
-            'title' => 'Events - EventHorizon Admin Console',
-            'user' => $this->userOrNull(),
-        ]);
+    // Analytics dashboard - auto-resolves to app/view/admin/analytics.php  
+    public function analytics() { 
+        $this->requireRole('admin'); 
+        $this->view([
+            'title' => 'Analytics - EventHorizon Admin',
+            'user' => $this->userOrNull()
+        ]); 
     }
     
-    // GET /admin/analytics - Analytics dashboard
-    public function analytics(): void
-    {
-        $this->requireAdmin();
-        
-        $this->render('admin/analytics.php', [
-            'title' => 'Analytics - EventHorizon Admin Console',
-            'user' => $this->userOrNull(),
-        ]);
+    // User management - auto-resolves to app/view/admin/users.php
+    public function users() { 
+        $this->requireRole('admin'); 
+        $this->view([
+            'title' => 'User Management - EventHorizon Admin',
+            'user' => $this->userOrNull()
+        ]); 
     }
     
-    // GET /admin/users - User management
-    public function users(): void
-    {
-        $this->requireAdmin();
-        
-        $this->render('admin/users.php', [
-            'title' => 'Users - EventHorizon Admin Console',
-            'user' => $this->userOrNull(),
-        ]);
+    // Database console - auto-resolves to app/view/admin/database.php
+    public function database() { 
+        $this->requireRole('admin'); 
+        $this->view([
+            'title' => 'Database Console - EventHorizon Admin',
+            'user' => $this->userOrNull()
+        ]); 
     }
     
-    // GET /admin/database - Data console
-    public function database(): void
-    {
-        $this->requireAdmin();
-        
-        $this->render('admin/database.php', [
-            'title' => 'Database - EventHorizon Admin Console',
-            'user' => $this->userOrNull(),
-        ]);
+    // Performance metrics - auto-resolves to app/view/admin/performance.php
+    public function performance() { 
+        $this->requireRole('admin'); 
+        $this->view([
+            'title' => 'Performance - EventHorizon Admin',
+            'user' => $this->userOrNull()
+        ]); 
     }
     
-    // GET /admin/performance - Performance metrics
-    public function performance(): void
-    {
-        $this->requireAdmin();
-        
-        $this->render('admin/performance.php', [
-            'title' => 'Performance - EventHorizon Admin Console',
-            'user' => $this->userOrNull(),
-        ]);
+    // Security console - auto-resolves to app/view/admin/security.php
+    public function security() { 
+        $this->requireRole('admin'); 
+        $this->view([
+            'title' => 'Security - EventHorizon Admin',
+            'user' => $this->userOrNull()
+        ]); 
     }
     
-    // GET /admin/security - Security console
-    public function security(): void
-    {
-        $this->requireAdmin();
-        
-        $this->render('admin/security.php', [
-            'title' => 'Security - EventHorizon Admin Console',
-            'user' => $this->userOrNull(),
-        ]);
+    // Reports - auto-resolves to app/view/admin/reports.php
+    public function reports() { 
+        $this->requireRole('admin'); 
+        $this->view([
+            'title' => 'Reports - EventHorizon Admin',
+            'user' => $this->userOrNull()
+        ]); 
     }
     
-    // GET /admin/reports - Reports
-    public function reports(): void
-    {
-        $this->requireAdmin();
-        
-        $this->render('admin/reports.php', [
-            'title' => 'Reports - EventHorizon Admin Console',
-            'user' => $this->userOrNull(),
-        ]);
+    // Notifications - auto-resolves to app/view/admin/notifications.php
+    public function notifications() { 
+        $this->requireRole('admin'); 
+        $this->view([
+            'title' => 'Notifications - EventHorizon Admin',
+            'user' => $this->userOrNull()
+        ]); 
     }
     
-    // GET /admin/notifications - Notifications
-    public function notifications(): void
-    {
-        $this->requireAdmin();
-        
-        $this->render('admin/notifications.php', [
-            'title' => 'Notifications - EventHorizon Admin Console',
-            'user' => $this->userOrNull(),
-        ]);
-    }
-    
-    // GET /admin/settings - Settings
-    public function settings(): void
-    {
-        $this->requireAdmin();
-        
-        $this->render('admin/settings.php', [
-            'title' => 'Settings - EventHorizon Admin Console',
-            'user' => $this->userOrNull(),
-        ]);
+    // Settings - auto-resolves to app/view/admin/settings.php
+    public function settings() { 
+        $this->requireRole('admin'); 
+        $this->view([
+            'title' => 'Settings - EventHorizon Admin',
+            'user' => $this->userOrNull()
+        ]); 
     }
 }

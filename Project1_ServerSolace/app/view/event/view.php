@@ -12,7 +12,7 @@ if (!$event) {
         
         <!-- Event Header Image -->
         <div style="position: relative;">
-            <div style="width: 100%; height: 300px; background-image: url('/public/img/Project1_image1.png'); background-size: cover; background-position: center;">
+            <div style="width: 100%; height: 300px; background-image: url('/~ks9700/iste-341/Project1/public/img/Project1_image1.png'); background-size: cover; background-position: center;">
                 <div style="position: absolute; top: 12px; left: 12px; background: rgba(0, 0, 0, 0.7); color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px;">
                     <?= htmlspecialchars($event['type']) ?>
                 </div>

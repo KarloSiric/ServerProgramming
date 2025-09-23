@@ -1,79 +1,91 @@
 <?php
-// EventController.php - EventHorizon event management
+// Event endpoints - clean controller actions that auto-resolve views
 class EventController extends Controller
 {
-    private EventModel $eventModel;
-    
-    public function __construct()
-    {
-        $this->eventModel = new EventModel();
-    }
-    
-    // GET /event/list - List all events
-    public function list(): void
-    {
-        $this->requireLogin();
-        $events = $this->eventModel->getAllEvents();
-        
-        $this->render('event/list.php', [
+    // Event list page - auto-resolves to app/view/event/list.php
+    public function list() { 
+        $this->requireLogin(); 
+        $this->view([
             'title' => 'Events - EventHorizon',
-            'events' => $events,
-            'user' => $this->userOrNull(),
-        ]);
+            'user' => $this->userOrNull()
+        ]); 
     }
     
-    // GET /event/view - View single event
-    public function view(): void
-    {
-        $this->requireLogin();
-        $id = (int)($_GET['id'] ?? 0);
-        $event = $this->eventModel->getEventById($id);
+    // Event detail view - auto-resolves to app/view/event/view.php
+    public function view($params = []) { 
+        $this->requireLogin(); 
+        $id = (int)($params[0] ?? $_GET['id'] ?? 0);
+        
+        $model = $this->model();
+        $event = $model->getEventById($id);
         
         if (!$event) {
             $_SESSION['flash_error'] = 'Event not found.';
-            $this->redirect('/user/dashboard');
+            $this->redirect('user/dashboard');
         }
         
-        $this->render('event/view.php', [
+        $this->view([
             'title' => htmlspecialchars($event['name']) . ' - EventHorizon',
             'event' => $event,
-            'user' => $this->userOrNull(),
-        ]);
+            'user' => $this->userOrNull()
+        ]); 
     }
     
-    // GET /event/register - Register for event
-    public function register(): void
-    {
-        $this->requireLogin();
-        $id = (int)($_GET['id'] ?? 0);
-        $event = $this->eventModel->getEventById($id);
+    // Event registration - handles registration and redirects
+    public function register($params = []) { 
+        $this->requireLogin(); 
+        $id = (int)($params[0] ?? $_GET['id'] ?? 0);
+        
+        $model = $this->model();
+        $event = $model->getEventById($id);
         
         if (!$event) {
             $_SESSION['flash_error'] = 'Event not found.';
-            $this->redirect('/user/dashboard');
+            $this->redirect('user/dashboard');
         }
         
         // In a real app, this would add to registrations table
         $_SESSION['flash_success'] = 'Successfully registered for ' . $event['name'] . '!';
-        $this->redirect('/user/dashboard');
+        $this->redirect('user/dashboard');
     }
     
-    // Admin functions
-    public function create(): void
-    {
-        $this->requireAdmin();
-        
-        $this->render('event/create.php', [
+    // Admin: Create event form - auto-resolves to app/view/event/create.php
+    public function create() { 
+        $this->requireRole('admin'); 
+        $this->view([
             'title' => 'Create Event - EventHorizon Admin',
             'user' => $this->userOrNull(),
-            'error' => $_SESSION['flash_error'] ?? null,
-        ]);
+            'error' => $_SESSION['flash_error'] ?? null
+        ]); 
         unset($_SESSION['flash_error']);
     }
     
-    public function store(): void
-    {
-        $this->requireAdmin();
+    // Admin: Edit event form - auto-resolves to app/view/event/create.php (reused)
+    public function edit($params = []) {
+        $this->requireRole('admin');
+        $id = (int)($params[0] ?? $_GET['id'] ?? 0);
+        
+        $model = $this->model();
+        $event = null;
+        
+        if ($id) {
+            $event = $model->getEventById($id);
+            if (!$event) {
+                $_SESSION['flash_error'] = 'Event not found.';
+                $this->redirect('admin/events');
+            }
+        }
+        
+        $this->view([
+            'title' => 'Edit Event - EventHorizon Admin',
+            'event' => $event,
+            'user' => $this->userOrNull()
+        ]);
+    }
+    
+    // Admin: Process event creation/editing
+    public function store() {
+        $this->requireRole('admin');
         
         $name = trim($_POST['name'] ?? '');
         $description = trim($_POST['description'] ?? '');
@@ -82,16 +94,33 @@ class EventController extends Controller
         
         if (empty($name) || empty($description) || empty($date) || $venue_id === 0) {
             $_SESSION['flash_error'] = 'All fields are required.';
-            $this->redirect('/event/create');
+            $this->redirect('event/create');
         }
         
-        $success = $this->eventModel->createEvent($name, $description, $date, $venue_id);
+        $model = $this->model();
+        $success = $model->createEvent($name, $description, $date, $venue_id);
+        
         if ($success) {
             $_SESSION['flash_success'] = 'Event created successfully!';
-            $this->redirect('/user/dashboard');
+            $this->redirect('admin/events');
         } else {
             $_SESSION['flash_error'] = 'Failed to create event.';
-            $this->redirect('/event/create');
+            $this->redirect('event/create');
         }
+    }
+    
+    // Admin: Delete event (demo mode)
+    public function delete($params = []) {
+        $this->requireRole('admin');
+        $id = (int)($params[0] ?? $_GET['id'] ?? 0);
+        
+        if ($id) {
+            // In a real app, this would call model->deleteEvent($id)
+            $_SESSION['flash_success'] = 'Event deleted successfully (demo mode)!';
+        } else {
+            $_SESSION['flash_error'] = 'Invalid event ID.';
+        }
+        
+        $this->redirect('admin/events');
     }
 }

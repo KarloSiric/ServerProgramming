@@ -9,9 +9,9 @@ $isAdmin = ($user['role'] ?? '') === 'admin';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($title) ?></title>
-    <link rel="stylesheet" href="public/css/style.css">
+    <link rel="stylesheet" href="/~ks9700/iste-341/Project1/public/css/style.css">
     <?php if ($isAdmin): ?>
-    <link rel="stylesheet" href="public/css/admin.css">
+    <link rel="stylesheet" href="/~ks9700/iste-341/Project1/public/css/admin.css">
     <?php endif; ?>
 </head>
 <body>
@@ -21,7 +21,7 @@ $isAdmin = ($user['role'] ?? '') === 'admin';
         <div class="admin-sidebar">
             <div class="sidebar-header">
                 <a href="?admin/overview" class="sidebar-brand">
-                    <div class="logo"></div>
+                    <div class="logo" style="background-image: url('/~ks9700/iste-341/Project1/public/img/Project1_LogoImage.png');"></div>
                     <div class="brand-text">
                         <h2>EventHorizon</h2>
                         <p>Admin Console</p>
@@ -43,7 +43,7 @@ $isAdmin = ($user['role'] ?? '') === 'admin';
             <nav class="sidebar-nav">
                 <div class="nav-section">
                     <div class="nav-section-title">System metrics & insights</div>
-                    <a href="?admin/overview" class="nav-item <?= strpos($_SERVER['REQUEST_URI'], '/admin/overview') !== false ? 'active' : '' ?>">
+                    <a href="?admin/overview" class="nav-item <?= strpos($_SERVER['REQUEST_URI'], 'admin/overview') !== false ? 'active' : '' ?>">
                         <span class="icon">📊</span>
                         <span class="text">Overview</span>
                     </a>
@@ -51,23 +51,23 @@ $isAdmin = ($user['role'] ?? '') === 'admin';
                 
                 <div class="nav-section">
                     <div class="nav-section-title">Management</div>
-                    <a href="?admin/events" class="nav-item <?= strpos($_SERVER['REQUEST_URI'], '/admin/events') !== false ? 'active' : '' ?>">
+                    <a href="?admin/events" class="nav-item <?= strpos($_SERVER['REQUEST_URI'], 'admin/events') !== false ? 'active' : '' ?}">
                         <span class="icon">📅</span>
                         <span class="text">Event Management</span>
                     </a>
-                    <a href="?admin/analytics" class="nav-item <?= strpos($_SERVER['REQUEST_URI'], '/admin/analytics') !== false ? 'active' : '' ?>">
+                    <a href="?admin/analytics" class="nav-item <?= strpos($_SERVER['REQUEST_URI'], 'admin/analytics') !== false ? 'active' : '' ?>">
                         <span class="icon">📈</span>
                         <span class="text">Analytics</span>
                     </a>
-                    <a href="?admin/users" class="nav-item <?= strpos($_SERVER['REQUEST_URI'], '/admin/users') !== false ? 'active' : '' ?>">
+                    <a href="?admin/users" class="nav-item <?= strpos($_SERVER['REQUEST_URI'], 'admin/users') !== false ? 'active' : '' ?>">
                         <span class="icon">👥</span>
                         <span class="text">User Management</span>
                     </a>
-                    <a href="?admin/database" class="nav-item <?= strpos($_SERVER['REQUEST_URI'], '/admin/database') !== false ? 'active' : '' ?>">
+                    <a href="?admin/database" class="nav-item <?= strpos($_SERVER['REQUEST_URI'], 'admin/database') !== false ? 'active' : '' ?>">
                         <span class="icon">🗄️</span>
                         <span class="text">Data Console</span>
                     </a>
-                    <a href="?admin/performance" class="nav-item <?= strpos($_SERVER['REQUEST_URI'], '/admin/performance') !== false ? 'active' : '' ?>">
+                    <a href="?admin/performance" class="nav-item <?= strpos($_SERVER['REQUEST_URI'], 'admin/performance') !== false ? 'active' : '' ?}">
                         <span class="icon">⚡</span>
                         <span class="text">Performance</span>
                     </a>
@@ -75,19 +75,19 @@ $isAdmin = ($user['role'] ?? '') === 'admin';
                 
                 <div class="nav-section">
                     <div class="nav-section-title">System</div>
-                    <a href="?admin/security" class="nav-item <?= strpos($_SERVER['REQUEST_URI'], '/admin/security') !== false ? 'active' : '' ?>">
+                    <a href="?admin/security" class="nav-item <?= strpos($_SERVER['REQUEST_URI'], 'admin/security') !== false ? 'active' : '' ?}">
                         <span class="icon">🔒</span>
                         <span class="text">Security</span>
                     </a>
-                    <a href="?admin/reports" class="nav-item <?= strpos($_SERVER['REQUEST_URI'], '/admin/reports') !== false ? 'active' : '' ?>">
+                    <a href="?admin/reports" class="nav-item <?= strpos($_SERVER['REQUEST_URI'], 'admin/reports') !== false ? 'active' : '' ?}">
                         <span class="icon">📋</span>
                         <span class="text">Reports</span>
                     </a>
-                    <a href="?admin/notifications" class="nav-item <?= strpos($_SERVER['REQUEST_URI'], '/admin/notifications') !== false ? 'active' : '' ?>">
+                    <a href="?admin/notifications" class="nav-item <?= strpos($_SERVER['REQUEST_URI'], 'admin/notifications') !== false ? 'active' : '' ?}">
                         <span class="icon">🔔</span>
                         <span class="text">Notifications</span>
                     </a>
-                    <a href="?admin/settings" class="nav-item <?= strpos($_SERVER['REQUEST_URI'], '/admin/settings') !== false ? 'active' : '' ?>">
+                    <a href="?admin/settings" class="nav-item <?= strpos($_SERVER['REQUEST_URI'], 'admin/settings') !== false ? 'active' : '' ?}">
                         <span class="icon">⚙️</span>
                         <span class="text">Settings</span>
                     </a>
@@ -134,7 +134,7 @@ $isAdmin = ($user['role'] ?? '') === 'admin';
         <nav class="navbar">
             <div class="nav-container">
                 <a href="?user/dashboard" class="nav-brand">
-                    <div class="logo" style="background-image: url('public/img/Project1_LogoImage.png');"></div>
+                    <div class="logo" style="background-image: url('/~ks9700/iste-341/Project1/public/img/Project1_LogoImage.png');"></div>
                     <div class="nav-brand-text">
                         <h1>EventHorizon</h1>
                         <p>Beyond the Edge of Events</p>

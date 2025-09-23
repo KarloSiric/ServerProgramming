@@ -25,7 +25,7 @@ $eventStats = $eventModel->getEventStats();
         <div class="search-section" style="margin: 0; flex: 1; max-width: 400px;">
             <input type="text" class="search-input" placeholder="Search events..." style="margin: 0;">
         </div>
-        <a href="/admin/events/create" class="btn-admin btn-admin-primary">
+        <a href="?event/create" class="btn-admin btn-admin-primary">
             <span>➕</span> Create Event
         </a>
     </div>
@@ -42,7 +42,7 @@ $eventStats = $eventModel->getEventStats();
         <?php foreach ($events as $event): ?>
         <div class="admin-card" style="margin-bottom: 0;">
             <div style="position: relative;">
-                <div style="width: 100%; height: 180px; background-image: url('/public/img/Project1_image1.png'); background-size: cover; background-position: center; border-radius: 8px 8px 0 0;">
+                <div style="width: 100%; height: 180px; background-image: url('/~ks9700/iste-341/Project1/public/img/Project1_image1.png'); background-size: cover; background-position: center; border-radius: 8px 8px 0 0;">
                     <div style="position: absolute; top: 12px; left: 12px; background: rgba(0, 0, 0, 0.7); color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px;">
                         <?= htmlspecialchars($event['type']) ?>
                     </div>
@@ -83,7 +83,7 @@ $eventStats = $eventModel->getEventStats();
                 </div>
 
                 <div style="display: flex; gap: 8px;">
-                    <a href="/admin/events/edit?id=<?= $event['id'] ?>" class="btn-admin btn-admin-outline" style="flex: 1; text-align: center; padding: 8px;">
+                    <a href="?event/edit/<?= $event['id'] ?>" class="btn-admin btn-admin-outline" style="flex: 1; text-align: center; padding: 8px;">
                         Edit
                     </a>
                     <button class="btn-admin btn-admin-danger" style="flex: 1; padding: 8px;" onclick="confirmDelete(<?= $event['id'] ?>)">
@@ -104,7 +104,7 @@ $eventStats = $eventModel->getEventStats();
 function confirmDelete(eventId) {
     if (confirm('Are you sure you want to delete this event? This action cannot be undone.')) {
         // In a real app, this would make an AJAX request
-        window.location.href = '/admin/events/delete?id=' + eventId;
+        window.location.href = '?event/delete/' + eventId;
     }
 }
 </script>

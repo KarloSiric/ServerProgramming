@@ -1,66 +1,38 @@
 <?php
 
 /**
- * Final class Index.
- * 
- * This class serves as the entry point for the MVC application. It initializes 
- * the application, sets up the autoloader, and handles incoming requests.
- * 
- * The 'final' keyword used on methods and constants  prevents child classes from 
- * overriding those methods or constants. If the class itself is being defined 
- * 'final' then it cannot be extended.
+ * EventHorizon Front Controller
+ * Bootstraps the application and handles all incoming requests
  * 
  * @author Kristina Marasovic <kristina.marasovic@croatia.rit.edu>
  */
 final class Index {
 
-    /**
-     * Runs the application. This method initializes the application and 
-     * starts handling the incoming request by using the Router.
-     */
-    public static function run() {
-        self::init();
-        self::handle();
+    public static function run() { 
+        self::init(); 
+        self::handle(); 
     }
 
-    /**
-     * Initializes the application. This method sets the error reporting level, 
-     * registers the autoloader, and defines constants for the rest of the framework
-     * to use.
-     */
     private static function init() {
-        // Start session for our application
-        session_start();
+        // Force error display for debugging
+        ini_set('display_errors', 1);
+        error_reporting(E_ALL);
         
-        // Report all errors (ensure you have display_errors = On in your php.ini file)
-        // and make PHP suggest changes to your code for the best interoperability.
-        // error_reporting(E_ALL | E_STRICT);
-        
-        // Report fatal run-time errors. These indicate errors that can not be 
-        // recovered from, such as a memory allocation problem. Execution of the script is halted.
-        // Also, make PHP suggest changes to your code for the best interoperability.
-        error_reporting(E_ERROR | E_STRICT);
+        // Start session if needed
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
 
-        // Define constants as in:
-        // PROJETC_URL === "https://localhost/W02C2-Lab2-MVC/";
+        // Define application constants
         define('PROJECT_URL', 'https://' . $_SERVER['HTTP_HOST'] . pathinfo($_SERVER['SCRIPT_NAME'], PATHINFO_DIRNAME));
-        define('TITLE', 'MVC with OO PHP');
-        
-        // Define the aoutoloader.
-        spl_autoload_register(['Index', 'loadClass']);
+        define('TITLE', 'EventHorizon · MVC');
 
+        // Set up autoloader
+        spl_autoload_register(['Index', 'loadClass']);
     }
 
-    /**
-     * Autoloads the class files. This method attempts to load a class file from 
-     * a predefined set of directories.
-     * 
-     * @param string $class_name The name of the class to load.
-     * @return bool Returns true if the class file was loaded, false otherwise.
-     */
-    private static function loadClass($class_name) {
-        // Define an array of directories of classes to be loaded on request.
-        $dirs = array(
+    private static function loadClass($className) {
+        $directories = [
             'app/',
             'app/router/',
             'app/model/',
@@ -68,31 +40,82 @@ final class Index {
             'app/controller/',
             'app/filter/',
             'app/db/'
-        );
-
-        // Loop through each directory to load all the class files. It will only require a file once.
-        // If it finds the same class in a directory later on, IT WILL IGNORE IT! Because of that require once.
-        foreach ($dirs as $dir) {
-            if (file_exists($dir . $class_name . '.php')) {
-                require_once($dir . $class_name . '.php');
-                return true;
+        ];
+        
+        foreach ($directories as $directory) {
+            $filePath = $directory . $className . '.php';
+            if (file_exists($filePath)) { 
+                require_once $filePath; 
+                return true; 
             }
         }
         return false;
     }
 
-    /**
-     * Handles the incoming request. This method creates a new Router object and 
-     * dispatches the request. The request is dispatched by providing the router 
-     * with the query string used to access the page.
-     * 
-     * @see <a href="https://www.php.net/manual/en/reserved.variables.server.php">$_SERVER</a>
-     */
     private static function handle() {
-        $router = new Router();
-        $router->dispatch($_SERVER["QUERY_STRING"]); // user/get/3
+        try {
+            // Get the query string, but handle empty/null cases
+            $queryString = $_SERVER["QUERY_STRING"] ?? '';
+            
+            // If no query string is provided, redirect to a sensible default
+            if (empty($queryString)) {
+                // Check if user is already logged in
+                if (isset($_SESSION['user'])) {
+                    // Logged in users go to their appropriate dashboard
+                    $userRole = $_SESSION['user']['role'] ?? 'user';
+                    if ($userRole === 'admin') {
+                        header("Location: ?admin/overview");
+                    } else {
+                        header("Location: ?user/dashboard");
+                    }
+                } else {
+                    // Non-logged-in users go to login page
+                    header("Location: ?user/login");
+                }
+                exit;
+            }
+            
+            // Create and dispatch through router
+            $router = new Router();
+            $router->dispatch($queryString);
+            
+        } catch (Exception $e) {
+            // Show detailed error information for debugging
+            self::showError($e->getMessage(), $e);
+        } catch (Error $e) {
+            // Handle fatal errors that might occur
+            self::showError("Fatal Error: " . $e->getMessage(), $e);
+        }
+    }
+    
+    private static function showError($message, $exception = null) {
+        http_response_code(500);
+        echo "<!DOCTYPE html>";
+        echo "<html><head><title>EventHorizon - System Error</title>";
+        echo "<style>";
+        echo "body{font-family:Arial,sans-serif;margin:40px;background:#f8f9fa;}";
+        echo ".error{background:#f8d7da;border:1px solid #f5c6cb;padding:20px;border-radius:8px;color:#721c24;}";
+        echo ".debug{background:#fff3cd;border:1px solid #ffeaa7;padding:15px;border-radius:8px;color:#856404;margin-top:15px;}";
+        echo "pre{background:#f8f9fa;padding:10px;border-radius:4px;overflow-x:auto;}";
+        echo "</style></head><body>";
+        echo "<h1>EventHorizon - System Error</h1>";
+        echo "<div class='error'><strong>Error:</strong> " . htmlspecialchars($message) . "</div>";
+        
+        // Show debug information if we have an exception
+        if ($exception && method_exists($exception, 'getFile')) {
+            echo "<div class='debug'>";
+            echo "<strong>Debug Information:</strong><br>";
+            echo "<strong>File:</strong> " . htmlspecialchars($exception->getFile()) . "<br>";
+            echo "<strong>Line:</strong> " . $exception->getLine() . "<br>";
+            echo "<strong>Stack Trace:</strong><br>";
+            echo "<pre>" . htmlspecialchars($exception->getTraceAsString()) . "</pre>";
+            echo "</div>";
+        }
+        
+        echo "<p><a href='?user/login'>← Return to Login</a> | <a href='/~ks9700/iste-341/Project1/diagnostic.php'>Run Diagnostic</a></p>";
+        echo "</body></html>";
     }
 }
 
-// Run the application.
+// Run the application
 Index::run();
