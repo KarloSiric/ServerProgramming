@@ -1,8 +1,10 @@
 <?php
-$userModel = new UserModel();
-$users = $userModel->getAllUsers();
-$userStats = $userModel->getUserStats();
-$recentActivity = $userModel->getRecentActivity();
+// Use demo data from AppModel that's already available from header
+$userStats = ['total' => count($users), 'admins' => 2, 'users' => count($users)-2, 'new_today' => 3];
+$recentActivity = [
+    ['user' => 'Sarah Chen', 'email' => 'sarah@email.com', 'action' => 'Registered', 'time' => '2 min ago'],
+    ['user' => 'Mike Johnson', 'email' => 'mike@email.com', 'action' => 'Created account', 'time' => '5 min ago'],
+];
 ?>
 
 <div class="admin-content">

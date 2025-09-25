@@ -1,177 +1,155 @@
 <?php
-// VenueController.php - Enhanced venue management
-class VenueController extends Controller
-{
-    private VenueModel $venueModel;
+/**
+ * @file VenueController.php
+ * @brief Controller for venue management functionality
+ * 
+ * Handles venue viewing, creation, and management.
+ * Venues are locations where events are held.
+ * 
+ * @author KarloSiric
+ * @version 1.0
+ */
+
+/**
+ * @class VenueController
+ * @brief Manages venue-related operations
+ * 
+ * URL mappings:
+ * - /venue/list → List all venues
+ * - /venue/create → Create venue form
+ * - /venue/store → Process venue creation
+ * - /venue/edit&id=X → Edit venue form
+ * - /venue/update → Process venue update
+ * - /venue/delete&id=X → Delete venue
+ */
+class VenueController extends Controller {
+  
+  /**
+   * @brief Display list of all venues
+   * 
+   * @return void
+   * 
+   * @details Shows all available venues with:
+   * - Venue name
+   * - Capacity
+   * - Address
+   * - Number of events hosted
+   * 
+   * @note URL: /venue/list
+   * @note Accessible by: All users
+   * @see app/view/venue/list.php
+   */
+  public function list() { 
+    $this->view(); 
+  }
+  
+  /**
+   * @brief Display venue creation form
+   * 
+   * @return void
+   * 
+   * @details Admin form for adding new venues:
+   * - Venue name input
+   * - Capacity input
+   * - Address fields
+   * - Amenities checklist
+   * 
+   * @note URL: /venue/create
+   * @note Restricted to: Admin users
+   * @see app/view/venue/create.php
+   */
+  public function create() { 
+    $this->requireRole('admin');
+    $this->view(); 
+  }
+  
+  /**
+   * @brief Process venue creation (demo only)
+   * 
+   * @return void
+   * 
+   * @details Would save new venue to database:
+   * 1. Validate input data
+   * 2. Check for duplicate venues
+   * 3. Save to database
+   * 4. Redirect with success message
+   * 
+   * @note POST endpoint from create form
+   * @warning Demo only - doesn't actually save
+   * @todo Implement database storage
+   */
+  public function store() {
+    $this->requireRole('admin');
+    if (function_exists('flash')) {
+      flash('success', 'Venue created successfully!');
+    }
+    header('Location: ' . PROJECT_URL . '/Index.php?venue/list');
+    exit;
+  }
+  
+  /**
+   * @brief Display venue edit form
+   * 
+   * @return void
+   * 
+   * @param int $_GET['id'] Venue ID to edit
+   * 
+   * @note URL: /venue/edit&id=1
+   * @note Restricted to: Admin users
+   * @todo Implement edit functionality
+   */
+  public function edit() {
+    $this->requireRole('admin');
+    $m = $this->model();
+    $id = isset($_GET['id']) ? (int)$_GET['id'] : 1;
+    $venues = $m->venues();
+    $venue = null;
     
-    public function __construct()
-    {
-        $this->venueModel = new VenueModel();
+    foreach ($venues as $v) {
+      if ($v['venue_id'] == $id) {
+        $venue = $v;
+        break;
+      }
     }
     
-    // GET /venue/list - List all venues
-    public function list(): void
-    {
-        $this->requireLogin();
-        $venues = $this->venueModel->getAllVenues();
-        
-        $this->render('venue/list.php', [
-            'title' => 'Event Venues - TechEvents Pro',
-            'venues' => $venues,
-            'user' => $this->userOrNull(),
-        ]);
+    $this->view(['venue' => $venue]);
+  }
+  
+  /**
+   * @brief Process venue update (demo only)
+   * 
+   * @return void
+   * 
+   * @note POST endpoint from edit form
+   * @warning Demo only - doesn't actually update
+   */
+  public function update() {
+    $this->requireRole('admin');
+    if (function_exists('flash')) {
+      flash('success', 'Venue updated successfully!');
     }
-    
-    // GET /venue/create - Show create form (admin only)
-    public function create(): void
-    {
-        $this->requireAdmin();
-        
-        $this->render('venue/create.php', [
-            'title' => 'Add Venue - TechEvents Pro',
-            'user' => $this->userOrNull(),
-            'error' => $_SESSION['flash_error'] ?? null,
-            'success' => $_SESSION['flash_success'] ?? null,
-        ]);
-        unset($_SESSION['flash_error'], $_SESSION['flash_success']);
+    header('Location: ' . PROJECT_URL . '/Index.php?venue/list');
+    exit;
+  }
+  
+  /**
+   * @brief Delete a venue (demo only)
+   * 
+   * @return void
+   * 
+   * @param int $_GET['id'] Venue ID to delete
+   * 
+   * @note URL: /venue/delete&id=1
+   * @note Restricted to: Admin users
+   * @warning Demo only - doesn't actually delete
+   * @todo Check if venue has events before deleting
+   */
+  public function delete() {
+    $this->requireRole('admin');
+    if (function_exists('flash')) {
+      flash('warning', 'Venue deleted successfully!');
     }
-    
-    // POST /venue/store - Store new venue
-    public function store(): void
-    {
-        $this->requireAdmin();
-        
-        $name = trim($_POST['name'] ?? '');
-        $description = trim($_POST['description'] ?? '');
-        $capacity = (int)($_POST['capacity'] ?? 0);
-        $location = trim($_POST['location'] ?? '');
-        $type = $_POST['type'] ?? 'Event Space';
-        $hourly_rate = (int)($_POST['hourly_rate'] ?? 100);
-        $contact_phone = trim($_POST['contact_phone'] ?? '');
-        $contact_email = trim($_POST['contact_email'] ?? '');
-        
-        if (empty($name) || $capacity <= 0 || empty($location)) {
-            $_SESSION['flash_error'] = 'Name, capacity, and location are required.';
-            $this->redirect('/venue/create');
-        }
-        
-        if ($capacity > 10000) {
-            $_SESSION['flash_error'] = 'Capacity cannot exceed 10,000 people.';
-            $this->redirect('/venue/create');
-        }
-        
-        // Process amenities
-        $amenities = $_POST['amenities'] ?? [];
-        $customAmenities = trim($_POST['custom_amenities'] ?? '');
-        
-        if (!empty($customAmenities)) {
-            $customArray = array_map('trim', explode(',', $customAmenities));
-            $amenities = array_merge($amenities, $customArray);
-        }
-        
-        // Validate email if provided
-        if (!empty($contact_email) && !filter_var($contact_email, FILTER_VALIDATE_EMAIL)) {
-            $_SESSION['flash_error'] = 'Please provide a valid email address.';
-            $this->redirect('/venue/create');
-        }
-        
-        $extraData = [
-            'description' => $description,
-            'amenities' => $amenities,
-            'type' => $type,
-            'hourly_rate' => $hourly_rate,
-            'contact_phone' => $contact_phone,
-            'contact_email' => $contact_email,
-        ];
-        
-        $success = $this->venueModel->createVenue($name, $capacity, $location, $extraData);
-        if ($success) {
-            $_SESSION['flash_success'] = 'Venue added successfully!';
-            $this->redirect('/venue/list');
-        } else {
-            $_SESSION['flash_error'] = 'Failed to add venue. Please try again.';
-            $this->redirect('/venue/create');
-        }
-    }
-    
-    // GET /venue/view - View single venue
-    public function view(): void
-    {
-        $this->requireLogin();
-        $id = (int)($_GET['id'] ?? 0);
-        $venue = $this->venueModel->getVenueById($id);
-        
-        if (!$venue) {
-            $_SESSION['flash_error'] = 'Venue not found.';
-            $this->redirect('/venue/list');
-        }
-        
-        $this->render('venue/view.php', [
-            'title' => htmlspecialchars($venue['name']) . ' - TechEvents Pro',
-            'venue' => $venue,
-            'user' => $this->userOrNull(),
-        ]);
-    }
-    
-    // GET /venue/book - Show booking form for venue
-    public function book(): void
-    {
-        $this->requireLogin();
-        $user = $this->userOrNull();
-        
-        if (($user['role'] ?? '') === 'admin') {
-            $_SESSION['flash_error'] = 'Use the create event form to schedule venue usage.';
-            $this->redirect('/venue/list');
-        }
-        
-        $id = (int)($_GET['id'] ?? 0);
-        $venue = $this->venueModel->getVenueById($id);
-        
-        if (!$venue) {
-            $_SESSION['flash_error'] = 'Venue not found.';
-            $this->redirect('/venue/list');
-        }
-        
-        // In a real app, this would show a booking form
-        $_SESSION['flash_success'] = 'Booking inquiry sent for ' . $venue['name'] . '!';
-        $this->redirect('/venue/view?id=' . $id);
-    }
-    
-    // GET /venue/filter - Filter venues by type/capacity
-    public function filter(): void
-    {
-        $this->requireLogin();
-        $type = $_GET['type'] ?? '';
-        $capacity_range = $_GET['capacity'] ?? '';
-        
-        if ($type) {
-            $venues = $this->venueModel->getVenuesByType($type);
-        } else {
-            $venues = $this->venueModel->getAllVenues();
-        }
-        
-        // Filter by capacity range if specified
-        if ($capacity_range) {
-            $venues = array_filter($venues, function($venue) use ($capacity_range) {
-                switch ($capacity_range) {
-                    case 'small':
-                        return $venue['capacity'] <= 50;
-                    case 'medium':
-                        return $venue['capacity'] > 50 && $venue['capacity'] <= 200;
-                    case 'large':
-                        return $venue['capacity'] > 200;
-                    default:
-                        return true;
-                }
-            });
-        }
-        
-        $this->render('venue/list.php', [
-            'title' => 'Filtered Venues - TechEvents Pro',
-            'venues' => array_values($venues),
-            'user' => $this->userOrNull(),
-            'current_filter' => $type,
-            'current_capacity' => $capacity_range,
-        ]);
-    }
+    header('Location: ' . PROJECT_URL . '/Index.php?venue/list');
+    exit;
+  }
 }

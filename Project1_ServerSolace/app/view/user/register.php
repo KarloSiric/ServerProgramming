@@ -1,89 +1,119 @@
-<div class="login-container">
-    <div class="login-card">
-        <div class="login-header">
-            <div style="display: flex; align-items: center; gap: 12px; justify-content: center; margin-bottom: 16px;">
-                <div class="logo" style="background-image: url('public/img/Project1_LogoImage.png'); background-size: cover; background-position: center; width: 32px; height: 32px; border-radius: 8px;"></div>
-                <div>
-                    <h1>EventHorizon</h1>
-                    <p style="margin: 0;">Beyond the Edge of Events</p>
+<?php
+/**
+ * @file register.php
+ * @brief User registration form view
+ * 
+ * Provides registration form for new users to create accounts.
+ * Handles both attendee and admin role selection.
+ * 
+ * @author KarloSiric
+ * @version 1.0
+ * 
+ * @note Called by UserController::register()
+ * @see UserController::register()
+ * @see UserController::createaccount() Processes this form
+ */
+?>
+<div class="container">
+    <div class="row justify-content-center min-vh-100 align-items-center">
+        <div class="col-md-5">
+            <!-- Registration Card -->
+            <div class="card shadow-lg">
+                <div class="card-body p-5">
+                    <!-- Header Section -->
+                    <div class="text-center mb-4">
+                        <!-- Application Logo -->
+                        <img src="<?= PROJECT_URL; ?>/public/img/Project1_LogoImage.png" 
+                             alt="EventHorizon" 
+                             style="width: 60px; height: 60px; border-radius: 12px;" 
+                             class="mb-3">
+                        
+                        <!-- Welcome Text -->
+                        <h2 class="h3 fw-bold">Create Your Account</h2>
+                        <p class="text-muted">Join EventHorizon to start managing events</p>
+                    </div>
+
+                    <?php 
+                    /**
+                     * Display flash messages if any
+                     * Shows validation errors or other messages
+                     */
+                    if (!empty($_SESSION['flash'])): ?>
+                        <?php require 'app/view/inc/flash.php'; ?>
+                    <?php endif; ?>
+
+                    <!-- Registration Form -->
+                    <!-- Submits to UserController::createaccount() -->
+                    <form method="post" action="<?= PROJECT_URL; ?>/Index.php?user/createaccount">
+                        
+                        <!-- Name Field -->
+                        <div class="mb-3">
+                            <label for="name" class="form-label small fw-semibold">Full Name</label>
+                            <input type="text" 
+                                   class="form-control form-control-lg" 
+                                   id="name" 
+                                   name="name" 
+                                   placeholder="John Doe" 
+                                   required>
+                        </div>
+
+                        <!-- Email Field -->
+                        <div class="mb-3">
+                            <label for="email" class="form-label small fw-semibold">Email Address</label>
+                            <input type="email" 
+                                   class="form-control form-control-lg" 
+                                   id="email" 
+                                   name="email" 
+                                   placeholder="john@example.com" 
+                                   required>
+                            <small class="text-muted">We'll use this for your username</small>
+                        </div>
+
+                        <!-- Password Field -->
+                        <div class="mb-3">
+                            <label for="password" class="form-label small fw-semibold">Password</label>
+                            <input type="password" 
+                                   class="form-control form-control-lg" 
+                                   id="password" 
+                                   name="password" 
+                                   placeholder="Choose a strong password" 
+                                   required>
+                            <small class="text-muted">Demo: Any password works</small>
+                        </div>
+
+                        <!-- Admin Role Checkbox (for demo) -->
+                        <div class="form-check mb-4">
+                            <input class="form-check-input" 
+                                   type="checkbox" 
+                                   id="admin_role" 
+                                   name="admin_role">
+                            <label class="form-check-label" for="admin_role">
+                                Register as Admin (Demo Only)
+                            </label>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn btn-primary btn-lg w-100 mb-3">
+                            Create Account
+                        </button>
+                    </form>
+
+                    <hr class="my-4">
+
+                    <!-- Login Link -->
+                    <p class="text-center mb-0">
+                        <small class="text-muted">Already have an account?</small><br>
+                        <a href="<?= PROJECT_URL; ?>/Index.php?user/login" class="text-decoration-none">Sign In</a>
+                    </p>
                 </div>
             </div>
-            <h2 style="margin-bottom: 8px;">Create Account</h2>
-            <p>Join EventHub to discover and manage professional tech conferences</p>
-        </div>
-
-        <?php if (!empty($error)): ?>
-            <div style="background: #fee; border: 1px solid #fcc; color: #900; padding: 12px; border-radius: 8px; margin-bottom: 20px;">
-                <?= htmlspecialchars($error) ?>
+            
+            <!-- Back to Home Link -->
+            <div class="text-center mt-3">
+                <a href="<?= PROJECT_URL; ?>/Index.php" class="text-muted text-decoration-none">
+                    <small>← Back to Home</small>
+                </a>
             </div>
-        <?php endif; ?>
-
-        <?php if (!empty($success)): ?>
-            <div style="background: #efe; border: 1px solid #cfc; color: #060; padding: 12px; border-radius: 8px; margin-bottom: 20px;">
-                <?= htmlspecialchars($success) ?>
-            </div>
-        <?php endif; ?>
-
-        <form method="post" action="?user/createAccount">
-            <div class="form-group">
-                <label for="name" class="form-label">Full Name</label>
-                <div style="position: relative;">
-                    <span style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #6b7280;">👤</span>
-                    <input type="text" id="name" name="name" class="form-control" 
-                           style="padding-left: 40px;" placeholder="Enter your full name" required>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="email" class="form-label">Email</label>
-                <div style="position: relative;">
-                    <span style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #6b7280;">📧</span>
-                    <input type="email" id="email" name="email" class="form-control" 
-                           style="padding-left: 40px;" placeholder="Enter your email" required>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="password" class="form-label">Password</label>
-                <div style="position: relative;">
-                    <span style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #6b7280;">🔒</span>
-                    <input type="password" id="password" name="password" class="form-control" 
-                           style="padding-left: 40px;" placeholder="Create a password" required>
-                    <span style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: #6b7280; cursor: pointer;">👁️</span>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="confirm_password" class="form-label">Confirm Password</label>
-                <div style="position: relative;">
-                    <span style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #6b7280;">🔒</span>
-                    <input type="password" id="confirm_password" name="confirm_password" class="form-control" 
-                           style="padding-left: 40px;" placeholder="Confirm your password" required>
-                    <span style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: #6b7280; cursor: pointer;">👁️</span>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                    <input type="checkbox" name="admin_role" style="margin: 0;">
-                    <span>Register as Event Administrator</span>
-                </label>
-            </div>
-
-            <div class="form-group">
-                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                    <input type="checkbox" required style="margin: 0;">
-                    <span>I agree to the Terms of Service and Privacy Policy</span>
-                </label>
-            </div>
-
-            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px; margin-bottom: 20px;">
-                Create Account
-            </button>
-        </form>
-
-        <div style="text-align: center; color: #6b7280;">
-            Already have an account? <a href="?user/login" style="color: #4f46e5;">Sign in</a>
         </div>
     </div>
 </div>

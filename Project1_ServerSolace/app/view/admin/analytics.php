@@ -1,8 +1,7 @@
 <?php
-$eventModel = new EventModel();
-$userModel = new UserModel();
-$eventStats = $eventModel->getEventStats();
-$userStats = $userModel->getUserStats();
+// Use demo data from AppModel that's already available from header
+$eventStats = ['total_events' => count($events), 'upcoming_events' => count($events), 'total_registrations' => 342];
+$userStats = ['total' => count($users), 'admins' => 2, 'users' => count($users)-2, 'new_today' => 3];
 ?>
 
 <div class="admin-content">

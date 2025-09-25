@@ -1,150 +1,235 @@
 <?php
-// Admin endpoints with role-gated access - following your friend's clean pattern
-class AdminController extends Controller
-{
-    // Main admin dashboard - auto-resolves to app/view/admin/overview.php
-    public function overview() { 
-        $this->requireRole('admin'); 
-        $this->view([
-            'title' => 'Admin Dashboard - EventHorizon',
-            'user' => $this->userOrNull()
-        ]); 
-    }
-    
-    // Event management page - auto-resolves to app/view/admin/events.php
-    public function events() { 
-        $this->requireRole('admin'); 
-        $this->view([
-            'title' => 'Event Management - EventHorizon Admin',
-            'user' => $this->userOrNull()
-        ]); 
-    }
-    
-    // Analytics dashboard - auto-resolves to app/view/admin/analytics.php  
-    public function analytics() { 
-        $this->requireRole('admin'); 
-        $this->view([
-            'title' => 'Analytics - EventHorizon Admin',
-            'user' => $this->userOrNull()
-        ]); 
-    }
-    
-    // User management - auto-resolves to app/view/admin/users.php
-    public function users() { 
-        $this->requireRole('admin'); 
-        $this->view([
-            'title' => 'User Management - EventHorizon Admin',
-            'user' => $this->userOrNull()
-        ]); 
-    }
-    
-    // Database console - auto-resolves to app/view/admin/database.php
-    public function database() { 
-        $this->requireRole('admin'); 
-        $this->view([
-            'title' => 'Database Console - EventHorizon Admin',
-            'user' => $this->userOrNull()
-        ]); 
-    }
-    
-    // Performance metrics - auto-resolves to app/view/admin/performance.php
-    public function performance() { 
-        $this->requireRole('admin'); 
-        $this->view([
-            'title' => 'Performance - EventHorizon Admin',
-            'user' => $this->userOrNull()
-        ]); 
-    }
-    
-    // Security console - auto-resolves to app/view/admin/security.php
-    public function security() { 
-        $this->requireRole('admin'); 
-        $this->view([
-            'title' => 'Security - EventHorizon Admin',
-            'user' => $this->userOrNull()
-        ]); 
-    }
-    
-    // Reports - auto-resolves to app/view/admin/reports.php
-    public function reports() { 
-        $this->requireRole('admin'); 
-        $this->view([
-            'title' => 'Reports - EventHorizon Admin',
-            'user' => $this->userOrNull()
-        ]); 
-    }
-    
-    // Notifications - auto-resolves to app/view/admin/notifications.php
-    public function notifications() { 
-        $this->requireRole('admin'); 
-        $this->view([
-            'title' => 'Notifications - EventHorizon Admin',
-            'user' => $this->userOrNull()
-        ]); 
-    }
-    
-    // Settings - auto-resolves to app/view/admin/settings.php
-    public function settings() { 
-        $this->requireRole('admin'); 
-        $this->view([
-            'title' => 'Settings - EventHorizon Admin',
-            'user' => $this->userOrNull()
-        ]); 
-    }
-    
-    // Process user management actions (activate, deactivate, delete)
-    public function userAction($params = []) {
-        $this->requireRole('admin');
-        
-        $action = $params[0] ?? '';
-        $userId = $params[1] ?? '';
-        
-        if (empty($action) || empty($userId)) {
-            $_SESSION['flash_error'] = 'Invalid user action.';
-            $this->redirect('admin/users');
-            return;
-        }
-        
-        // In a real app, this would interact with the database
-        switch ($action) {
-            case 'activate':
-                $_SESSION['flash_success'] = "User {$userId} activated successfully! (Demo mode)";
-                break;
-            case 'deactivate':
-                $_SESSION['flash_success'] = "User {$userId} deactivated successfully! (Demo mode)";
-                break;
-            case 'delete':
-                $_SESSION['flash_success'] = "User {$userId} deleted successfully! (Demo mode)";
-                break;
-            default:
-                $_SESSION['flash_error'] = 'Unknown user action.';
-        }
-        
-        $this->redirect('admin/users');
-    }
-    
-    // Handle AJAX requests for dynamic admin interface updates
-    public function ajax($params = []) {
-        $this->requireRole('admin');
-        
-        $action = $params[0] ?? '';
-        
-        header('Content-Type: application/json');
-        
-        switch ($action) {
-            case 'stats':
-                // Return mock real-time statistics
-                echo json_encode([
-                    'events' => rand(15, 25),
-                    'users' => rand(150, 300),
-                    'registrations' => rand(45, 120),
-                    'revenue' => '$' . number_format(rand(15000, 45000))
-                ]);
-                break;
-                
-            default:
-                echo json_encode(['error' => 'Unknown AJAX action']);
-        }
-        exit;
-    }
+/**
+ * @file AdminController.php
+ * @brief Controller for administrative functionality
+ * 
+ * Provides admin-only views and management interfaces.
+ * All methods are protected by role-based access control.
+ * 
+ * @author KarloSiric
+ * @version 1.0
+ * 
+ * @note Every action requires admin role
+ */
+
+/**
+ * @class AdminController
+ * @brief Handles all admin panel functionality
+ * 
+ * URL mappings (all require admin role):
+ * - /admin/overview → Dashboard overview
+ * - /admin/events → Event management
+ * - /admin/users → User management
+ * - /admin/analytics → System analytics
+ * - /admin/reports → Generate reports
+ * - /admin/settings → System settings
+ * - /admin/security → Security dashboard
+ * - /admin/database → Database management
+ * - /admin/performance → Performance metrics
+ * - /admin/notifications → System notifications
+ * 
+ * @warning All methods check for admin role before rendering
+ */
+class AdminController extends Controller {
+  
+  /**
+   * @brief Admin dashboard overview
+   * 
+   * @return void
+   * 
+   * @details Shows comprehensive admin dashboard with:
+   * - System statistics
+   * - Recent activity
+   * - Quick actions
+   * - Performance metrics
+   * 
+   * @note URL: /admin/overview
+   * @note Required role: admin
+   * @see app/view/admin/overview.php
+   */
+  public function overview() { 
+    $this->requireRole('admin'); 
+    $this->view(); 
+  }
+  
+  /**
+   * @brief Event management interface
+   * 
+   * @return void
+   * 
+   * @details Provides CRUD operations for events:
+   * - List all events with details
+   * - Edit/Delete buttons
+   * - Create new event link
+   * - Event statistics
+   * 
+   * @note URL: /admin/events
+   * @note Required role: admin
+   * @see app/view/admin/events.php
+   */
+  public function events() { 
+    $this->requireRole('admin'); 
+    $this->view(); 
+  }
+  
+  /**
+   * @brief User management interface
+   * 
+   * @return void
+   * 
+   * @details Manage system users:
+   * - List all users
+   * - View user details
+   * - Edit user roles
+   * - User statistics
+   * 
+   * @note URL: /admin/users
+   * @note Required role: admin
+   * @see app/view/admin/users.php
+   */
+  public function users() { 
+    $this->requireRole('admin'); 
+    $this->view(); 
+  }
+  
+  /**
+   * @brief Analytics dashboard
+   * 
+   * @return void
+   * 
+   * @details System analytics including:
+   * - Event attendance trends
+   * - User registration stats
+   * - Revenue analytics
+   * - Engagement metrics
+   * 
+   * @note URL: /admin/analytics
+   * @note Required role: admin
+   * @see app/view/admin/analytics.php
+   */
+  public function analytics() { 
+    $this->requireRole('admin'); 
+    $this->view(); 
+  }
+  
+  /**
+   * @brief Reports generation interface
+   * 
+   * @return void
+   * 
+   * @details Generate various reports:
+   * - Event reports
+   * - Financial reports
+   * - User activity reports
+   * - Custom date ranges
+   * 
+   * @note URL: /admin/reports
+   * @note Required role: admin
+   * @see app/view/admin/reports.php
+   */
+  public function reports() { 
+    $this->requireRole('admin'); 
+    $this->view(); 
+  }
+  
+  /**
+   * @brief System settings interface
+   * 
+   * @return void
+   * 
+   * @details Configure system settings:
+   * - General settings
+   * - Email configuration
+   * - Payment settings
+   * - Site preferences
+   * 
+   * @note URL: /admin/settings
+   * @note Required role: admin
+   * @see app/view/admin/settings.php
+   */
+  public function settings() { 
+    $this->requireRole('admin'); 
+    $this->view(); 
+  }
+  
+  /**
+   * @brief Security dashboard
+   * 
+   * @return void
+   * 
+   * @details Security monitoring:
+   * - Login attempts
+   * - Security alerts
+   * - User sessions
+   * - System logs
+   * 
+   * @note URL: /admin/security
+   * @note Required role: admin
+   * @see app/view/admin/security.php
+   */
+  public function security() { 
+    $this->requireRole('admin'); 
+    $this->view(); 
+  }
+  
+  /**
+   * @brief Database management interface
+   * 
+   * @return void
+   * 
+   * @details Database operations:
+   * - Connection status
+   * - Backup management
+   * - Query statistics
+   * - Optimization tools
+   * 
+   * @note URL: /admin/database
+   * @note Required role: admin
+   * @see app/view/admin/database.php
+   * @warning Handle with care - production database access
+   */
+  public function database() { 
+    $this->requireRole('admin'); 
+    $this->view(); 
+  }
+  
+  /**
+   * @brief Performance monitoring dashboard
+   * 
+   * @return void
+   * 
+   * @details System performance metrics:
+   * - Response times
+   * - Server load
+   * - Cache statistics
+   * - Resource usage
+   * 
+   * @note URL: /admin/performance
+   * @note Required role: admin
+   * @see app/view/admin/performance.php
+   */
+  public function performance() { 
+    $this->requireRole('admin'); 
+    $this->view(); 
+  }
+  
+  /**
+   * @brief Notification management
+   * 
+   * @return void
+   * 
+   * @details Manage system notifications:
+   * - Email notifications
+   * - System alerts
+   * - User messages
+   * - Broadcast messages
+   * 
+   * @note URL: /admin/notifications
+   * @note Required role: admin
+   * @see app/view/admin/notifications.php
+   */
+  public function notifications() { 
+    $this->requireRole('admin'); 
+    $this->view(); 
+  }
 }

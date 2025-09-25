@@ -1,178 +1,165 @@
-<?php 
-$u = $user ?? ['username' => 'guest']; 
-$events = $events ?? [];
-?>
-
 <div class="main-content">
     <!-- Welcome Section -->
-    <div class="welcome-section">
+    <section class="welcome-section">
         <div class="welcome-header">
             <div class="welcome-text">
-                <h1>Welcome back, <?= htmlspecialchars($u['name'] ?? $u['username']) ?>! ⭐</h1>
-                <p>Ready to explore the next horizon of tech events?</p>
+                <h1>Welcome back, <?= htmlspecialchars($user['name']) ?>! 👋</h1>
+                <p>Ready to discover amazing tech events? Your next breakthrough is just an event away.</p>
             </div>
             <div class="welcome-stats">
                 <div class="stat-item">
-                    <h2>2</h2>
-                    <p>Events Joined</p>
+                    <h2><?= count($events) ?></h2>
+                    <p>Available Events</p>
                 </div>
                 <div class="stat-item">
-                    <h2>2</h2>
-                    <p>Saved Events</p>
+                    <h2>12</h2>
+                    <p>Registered Events</p>
                 </div>
                 <div class="stat-item">
-                    <h2>$299</h2>
-                    <p>Total Invested</p>
+                    <h2>4.9</h2>
+                    <p>Avg Rating</p>
                 </div>
             </div>
         </div>
+    </section>
 
-        <!-- Dashboard Cards -->
-        <div class="dashboard-cards">
-            <div class="dashboard-card blue">
-                <h3>2</h3>
-                <p>Registered Events</p>
-                <div class="small-text">0 upcoming</div>
-            </div>
-            <div class="dashboard-card green">
-                <h3>5</h3>
-                <p>Available Events</p>
-                <div class="small-text">5 open for registration</div>
-            </div>
-            <div class="dashboard-card purple">
-                <h3>2</h3>
-                <p>Saved Events</p>
-                <div class="small-text">Bookmarked for later</div>
-            </div>
-            <div class="dashboard-card orange">
-                <h3>20%</h3>
-                <p>Learning Progress</p>
-                <div class="progress-section">
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 20%;"></div>
-                    </div>
-                    <div class="small-text">Goal: 10 events this year</div>
+    <!-- Dashboard Cards -->
+    <div class="dashboard-cards">
+        <div class="dashboard-card blue">
+            <h3>24</h3>
+            <p>Events This Month</p>
+            <div class="progress-section">
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 75%;"></div>
                 </div>
+                <div class="small-text">75% capacity filled</div>
+            </div>
+        </div>
+        
+        <div class="dashboard-card green">
+            <h3>89%</h3>
+            <p>Attendance Rate</p>
+            <div class="progress-section">
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 89%;"></div>
+                </div>
+                <div class="small-text">Above average</div>
+            </div>
+        </div>
+        
+        <div class="dashboard-card purple">
+            <h3>156</h3>
+            <p>Network Connections</p>
+            <div class="progress-section">
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 65%;"></div>
+                </div>
+                <div class="small-text">Growing network</div>
+            </div>
+        </div>
+        
+        <div class="dashboard-card orange">
+            <h3>$2,400</h3>
+            <p>Saved on Events</p>
+            <div class="progress-section">
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 80%;"></div>
+                </div>
+                <div class="small-text">Smart choices</div>
             </div>
         </div>
     </div>
 
     <!-- Navigation Tabs -->
     <div class="nav-tabs">
-        <button class="nav-tab active">Discover</button>
-        <button class="nav-tab">My Events</button>
-        <button class="nav-tab">Saved</button>
-        <button class="nav-tab">For You</button>
+        <button class="nav-tab active">All Events</button>
+        <button class="nav-tab">Upcoming</button>
+        <button class="nav-tab">Past</button>
+        <button class="nav-tab">Registered</button>
     </div>
 
     <!-- Search Section -->
     <div class="search-section">
-        <input type="text" class="search-input" placeholder="Search events, organizers, or topics...">
+        <input type="text" class="search-input" placeholder="Search events by name, topic, or organizer...">
+        <button class="btn btn-primary">Search</button>
     </div>
 
     <!-- Filter Section -->
     <div class="filter-section">
         <div class="filter-tags">
-            <button class="filter-tag active">
-                All Events
-                <span class="count"><?= count($events) ?></span>
-            </button>
-            <button class="filter-tag">
-                Conferences
-                <span class="count">2</span>
-            </button>
-            <button class="filter-tag">
-                Workshops
-                <span class="count">2</span>
-            </button>
-            <button class="filter-tag">
-                Networking
-                <span class="count">1</span>
-            </button>
-            <button class="filter-tag">
-                Webinars
-                <span class="count">0</span>
-            </button>
+            <div class="filter-tag active">
+                All <span class="count"><?= count($events) ?></span>
+            </div>
+            <div class="filter-tag">
+                Conference <span class="count">2</span>
+            </div>
+            <div class="filter-tag">
+                Workshop <span class="count">2</span>
+            </div>
+            <div class="filter-tag">
+                Networking <span class="count">1</span>
+            </div>
         </div>
+        
         <div class="view-controls">
-            <button class="view-btn active">⊞ Filters</button>
-            <button class="view-btn">⊟</button>
-            <button class="view-btn">☰</button>
+            <button class="view-btn active">Grid</button>
+            <button class="view-btn">List</button>
         </div>
     </div>
 
     <!-- Events Grid -->
     <div class="events-grid">
-        <?php foreach (array_slice($events, 0, 6) as $event): ?>
+        <?php 
+        $eventImages = [
+            1 => 'Project1_image1.png',
+            2 => 'Project1_Image2.png', 
+            3 => 'Project1_Image3.png',
+            4 => 'Project1_image1.png',
+            5 => 'Project1_Image2.png'
+        ];
+        foreach ($events as $event): 
+            $imagePath = PROJECT_URL . '/public/img/' . ($eventImages[$event['event_id']] ?? 'Project1_image1.png');
+        ?>
         <div class="event-card">
-            <div class="event-image" style="background-image: url('/~ks9700/iste-341/Project1/public/img/Project1_image1.png');">
-                <div class="event-tag"><?= htmlspecialchars($event['type']) ?></div>
-                <div class="event-price">$<?= $event['price'] ?? 299 ?></div>
+            <div class="event-image" style="background-image: url('<?= $imagePath ?>'); background-size: cover; background-position: center;">
+                <div class="event-tag"><?= ucfirst($event['type']) ?></div>
+                <div class="event-price"><?= $event['price'] == 0 ? 'Free' : '$' . $event['price'] ?></div>
             </div>
             <div class="event-content">
                 <h3 class="event-title"><?= htmlspecialchars($event['name']) ?></h3>
-                <p class="event-description">
-                    <?= htmlspecialchars(substr($event['description'], 0, 100)) ?>...
-                </p>
+                <p class="event-description"><?= htmlspecialchars($event['description']) ?></p>
                 
                 <div class="event-details">
                     <div class="event-detail">
                         <span class="icon">📅</span>
-                        <div>
-                            <div><?= date('M j, Y', strtotime($event['date'])) ?></div>
-                            <div><?= $event['time'] ?? '9:00 AM' ?> - <?= $event['end_time'] ?? '6:00 PM' ?></div>
-                        </div>
+                        <span><?= date('M j, Y', strtotime($event['date'])) ?></span>
+                    </div>
+                    <div class="event-detail">
+                        <span class="icon">⏰</span>
+                        <span><?= $event['time'] ?></span>
                     </div>
                     <div class="event-detail">
                         <span class="icon">📍</span>
-                        <div>
-                            <div><?= htmlspecialchars($event['venue_name']) ?></div>
-                            <div><?= $event['registration_count'] ?? 0 ?>/<?= $event['venue_capacity'] ?> registered</div>
-                        </div>
+                        <span><?= htmlspecialchars($event['venue_name']) ?></span>
+                    </div>
+                    <div class="event-detail">
+                        <span class="icon">👥</span>
+                        <span><?= $event['venue_capacity'] ?> spots</span>
                     </div>
                 </div>
-
+                
                 <div class="event-organizer">
-                    <span class="icon">👤</span>
-                    Organized by <?= $event['organizer'] ?? 'Event Foundation' ?>
+                    Organized by <strong><?= htmlspecialchars($event['organizer']) ?></strong>
                 </div>
-
+                
                 <div class="event-actions">
-                    <a href="?event/view/<?= $event['id'] ?>" class="btn btn-view">View Details</a>
-                    <?php if (isset($event['registered']) && $event['registered']): ?>
-                        <button class="btn btn-registered">Registered</button>
-                    <?php else: ?>
-                        <button class="btn btn-register">Register</button>
-                    <?php endif; ?>
+                    <a href="<?= PROJECT_URL; ?>/Index.php?event/show&id=<?= $event['event_id'] ?>" class="btn btn-view">View Details</a>
+                    <a href="<?= PROJECT_URL; ?>/Index.php?event/register&id=<?= $event['event_id'] ?>" class="btn btn-register">
+                        <?= $event['price'] == 0 ? 'Join Free' : '$' . $event['price'] . ' Register' ?>
+                    </a>
                 </div>
             </div>
         </div>
         <?php endforeach; ?>
     </div>
 </div>
-
-<script>
-// Tab switching functionality
-document.querySelectorAll('.nav-tab').forEach(tab => {
-    tab.addEventListener('click', function() {
-        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-        this.classList.add('active');
-    });
-});
-
-// Filter switching
-document.querySelectorAll('.filter-tag').forEach(tag => {
-    tag.addEventListener('click', function() {
-        document.querySelectorAll('.filter-tag').forEach(t => t.classList.remove('active'));
-        this.classList.add('active');
-    });
-});
-
-// View controls
-document.querySelectorAll('.view-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-        document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
-        this.classList.add('active');
-    });
-});
-</script>

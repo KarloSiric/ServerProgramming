@@ -1,12 +1,12 @@
 <?php
-$userModel = new UserModel();
-$eventModel = new EventModel();
-$venueModel = new VenueModel();
-
-$userStats = $userModel->getUserStats();
-$eventStats = $eventModel->getEventStats();
-$venueStats = $venueModel->getVenueStats();
-$recentActivity = $userModel->getRecentActivity();
+// Use demo data from AppModel
+$userStats = ['total' => count($users), 'admins' => 2, 'users' => count($users)-2, 'new_today' => 3, 'active_sessions' => 12];
+$eventStats = ['total_events' => count($events), 'upcoming_events' => count($events), 'total_registrations' => 342];
+$venueStats = ['total_venues' => count($venues), 'total_capacity' => 955, 'average_capacity' => 191, 'largest_venue' => 500];
+$recentActivity = [
+    ['user' => 'Sarah Chen', 'email' => 'sarah@email.com', 'action' => 'Registered for React Summit', 'time' => '2 min ago', 'avatar' => 'SC'],
+    ['user' => 'Mike Johnson', 'email' => 'mike@email.com', 'action' => 'Created account', 'time' => '5 min ago', 'avatar' => 'MJ'],
+];
 ?>
 
 <div class="admin-content">

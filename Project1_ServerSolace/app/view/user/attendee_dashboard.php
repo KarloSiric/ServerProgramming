@@ -106,7 +106,7 @@ $events = $eventModel->getAllEvents();
     <div class="events-grid">
         <?php foreach (array_slice($events, 0, 6) as $event): ?>
         <div class="event-card">
-            <div class="event-image" style="background-image: url('/~ks9700/iste-341/Project1/public/img/Project1_image1.png');">
+            <div class="event-image" style="background-image: url('/public/img/Project1_image1.png');">
                 <div class="event-tag"><?= htmlspecialchars($event['type']) ?></div>
                 <div class="event-price">$<?= $event['price'] ?? 299 ?></div>
             </div>
@@ -139,7 +139,7 @@ $events = $eventModel->getAllEvents();
                 </div>
 
                 <div class="event-actions">
-                    <a href="?event/view/<?= $event['id'] ?>" class="btn btn-view">View Details</a>
+                    <a href="/event/view?id=<?= $event['id'] ?>" class="btn btn-view">View Details</a>
                     <?php if (isset($event['registered']) && $event['registered']): ?>
                         <button class="btn btn-registered">Registered</button>
                     <?php else: ?>
