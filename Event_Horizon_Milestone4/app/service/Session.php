@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 
 final class Session
 {
@@ -62,8 +61,8 @@ final class Session
             session_destroy();
         }
 
-        // Redirect to login after destroying the session
-        header('Location: ' . BASE_PATH . '/Index.php?controller=user&action=login');
+        // FIXED: Redirect using PROJECT_URL and clean URLs
+        header('Location: ' . PROJECT_URL . '/user/login');
         exit;
     }
 }

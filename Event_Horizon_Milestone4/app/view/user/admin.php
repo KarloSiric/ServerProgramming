@@ -8,7 +8,7 @@
       <span style="background: rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 25px; font-weight: 600;">
         👤 <?= htmlspecialchars($u['username']) ?>
       </span>
-      <a href="<?= htmlspecialchars(BASE_PATH) ?>/index.php?controller=user&action=logout"
+      <a href="<?= PROJECT_URL ?>/user/logout"
          style="color: white; text-decoration: none; background: rgba(255,255,255,0.2); padding: 0.5rem 1.25rem; border-radius: 25px; font-weight: 600; transition: all 0.3s ease;">
         🚪 Sign Out
       </a>
@@ -36,7 +36,7 @@
               <td>🏁 <?= htmlspecialchars($e['end_date']) ?></td>
               <td>📍 <?= htmlspecialchars($e['venue_name']) ?></td>
               <td>
-                <a href="<?= htmlspecialchars(BASE_PATH) ?>/index.php?controller=event&action=attendees&id=<?= (int)$e['event_id'] ?>"
+                <a href="<?= PROJECT_URL ?>/event/attendees/<?= (int)$e['event_id'] ?>"
                    style="display:inline-block;padding:0.5rem 1rem;background:<?= ($e['registered'] >= $e['allowed_number']) ? 'linear-gradient(135deg, #f56565 0%, #ed8936 100%)' : 'linear-gradient(135deg, #48bb78 0%, #38a169 100%)' ?>;color:white;border-radius:25px;text-decoration:none;font-weight:600;transition:all .3s;">
                   👥 <?= (int)$e['registered'] ?>/<?= (int)$e['allowed_number'] ?> Registered
                 </a>

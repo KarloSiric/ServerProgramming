@@ -26,8 +26,8 @@
       </div>
     <?php endif; ?>
 
-    <!-- LOWERCASE index.php -->
-    <form method="post" action="<?= htmlspecialchars(BASE_PATH) ?>/index.php?controller=user&action=login" class="login-form">
+    <!-- FIXED: Using clean URL -->
+    <form method="post" action="<?= PROJECT_URL ?>/user/login" class="login-form">
       <div class="form-group">
         <label for="username"><span class="label-icon">👤</span> Username</label>
         <input type="text" id="username" name="username" required placeholder="your_username" autocomplete="username">
@@ -62,7 +62,7 @@
     <div class="login-footer">
       <p class="footer-text">
         Don't have an account?
-        <a href="<?= htmlspecialchars(BASE_PATH) ?>/index.php?controller=user&action=register" class="register-link">Create one now</a>
+        <a href="<?= PROJECT_URL ?>/user/register" class="register-link">Create one now</a>
       </p>
     </div>
 
@@ -73,9 +73,8 @@
   </section>
 </div>
 
-
-
 <style>
+/* All the same CSS as before... */
   .login-container {
     min-height: calc(100vh - 200px);
     display: flex;
@@ -131,7 +130,6 @@
   }
 
   @keyframes floatCircle {
-
     0%,
     100% {
       transform: translate(0, 0) scale(1);
@@ -487,7 +485,6 @@
   }
 
   @keyframes shakeAlert {
-
     0%,
     100% {
       transform: translateX(0);

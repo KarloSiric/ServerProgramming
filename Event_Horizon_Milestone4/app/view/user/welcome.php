@@ -6,7 +6,7 @@
     </span>!
   </p>
   <p style="margin-bottom: 2rem; color: var(--text-secondary);">You're successfully logged in. Ready to explore?</p>
-  <a href="<?= htmlspecialchars(BASE_PATH) ?>/index.php?controller=user&action=dashboard"
+  <a href="<?= PROJECT_URL ?>/attendee/dashboard"
      style="display:inline-block;padding:1rem 2rem;background:var(--primary-gradient);color:white;text-decoration:none;border-radius:50px;font-weight:700;font-size:1.1rem;box-shadow:var(--shadow-md);transition:all .3s;">
     🚀 Launch Your Dashboard
   </a>

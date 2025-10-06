@@ -1,58 +1,52 @@
 <?php
-final class Router
-{
-    private string $pattern = '/^(?<controller>[a-z]+)\/(?<action>[a-z]+)(?<params>[\/\w-]*)\/?$/';
 
-    private string $controller = 'UserController';
-    private string $action     = 'login';
-    private array  $params     = [];
+/**
+ * Router - Fixed param handling
+ */
+final class Router {
 
-    public function dispatch(string $queryString): void
-    {
-        $queryString = trim($queryString, '/');
+    private $pattern = "/^(?<controller>[a-z]+)\/(?<action>[a-z]+)(?<params>[\/\w-]*)\/?$/";
+    private $controller = 'UserController';
+    private $action = 'login';
+    private $params = [];
 
-        // Pretty URLs: /user/login/123
-        if ($queryString && ($parsed = $this->parse($queryString))) {
+    public function dispatch($query_string) {
+        $query_string = trim($query_string, '/');
+        
+        if ($query_string && ($parsed = $this->parse($query_string))) {
             $this->controller = $parsed['controller'];
-            $this->action     = $parsed['action'];
-            $this->params     = $parsed['params'];
+            $this->action = $parsed['action'];
+            $this->params = $parsed['params'];
+        }
+
+        if (class_exists($this->controller)) {
+            $controller = new $this->controller();
+            if (is_callable([$controller, $this->action])) {
+                $controller->{$this->action}($this->params);
+            } else {
+                throw new Exception("Method '$this->action' in controller '$this->controller' not found");
+            }
         } else {
-            // Legacy GET: ?controller=user&action=login
-            $c = $_GET['controller'] ?? null;
-            $a = $_GET['action'] ?? null;
-            if ($c) { $this->controller = ucfirst(strtolower((string)$c)) . 'Controller'; }
-            if ($a) { $this->action = (string)$a; }
-        }
-
-        if (!class_exists($this->controller)) {
-            throw new Exception("Controller class '{$this->controller}' not found");
-        }
-
-        $controller = new $this->controller();
-
-        if (!is_callable([$controller, $this->action])) {
-            throw new Exception("Method '{$this->action}' not found on {$this->controller}");
-        }
-
-        // IMPORTANT: Only pass params if there are any.
-        $params = array_values(array_filter($this->params, static function($p) {
-            return $p !== '' && $p !== null;
-        }));
-
-        if (empty($params)) {
-            $controller->{$this->action}();              // e.g., login()
-        } else {
-            call_user_func_array([$controller, $this->action], $params); // e.g., show($id)
+            throw new Exception("Controller class '$this->controller' not found");
         }
     }
 
-    private function parse(string $queryString)
-    {
-        if (preg_match($this->pattern, $queryString, $m)) {
-            $controller = ucfirst($m['controller']) . 'Controller';
-            $action     = $m['action'];
-            $params     = explode('/', ltrim($m['params'], '/'));
-            return compact('controller', 'action', 'params');
+    private function parse($query_string) {
+        if (preg_match($this->pattern, $query_string, $matches)) {
+            $controller = ucfirst($matches["controller"]) . 'Controller';
+            $action = $matches["action"];
+            
+            // Split params and FILTER OUT EMPTY VALUES
+            $params = array_values(array_filter(
+                explode("/", ltrim($matches["params"], "/")),
+                fn($p) => $p !== ''
+            ));
+            
+            return [
+                'controller' => $controller,
+                'action' => $action,
+                'params' => $params
+            ];
         }
         return false;
     }

@@ -1,13 +1,25 @@
 <?php
-declare(strict_types=1);
 
 class AttendeeController extends Controller
 {
-    public function dashboard(): void
+    public function __construct()
     {
-        $this->requireLogin();
-        $this->render('attendee/dashboard.php', [
-            'user' => $_SESSION['user']
-        ]);
+        Session::start();
+        
+        // Check if session expired
+        if (isset($_SESSION['user']) && Session::isExpired()) {
+            Session::destroy();
+        }
+    }
+
+    public function dashboard()
+    {
+        if (!isset($_SESSION['user'])) {
+            header('Location: ' . PROJECT_URL . '/user/login');
+            exit;
+        }
+
+        $data = ['user' => $_SESSION['user']];
+        $this->view($data);
     }
 }

@@ -1,8 +1,8 @@
 <?php
 $isEdit = !empty($event);
 $action = $isEdit
-  ? (BASE_PATH . "/Index.php?controller=event&action=update")
-  : (BASE_PATH . "/Index.php?controller=event&action=store");
+  ? (PROJECT_URL . "/event/update")
+  : (PROJECT_URL . "/event/store");
 ?>
 <section class="card" style="max-width: 800px;">
   <h2><?= $isEdit ? 'Edit Event' : 'Create Event' ?></h2>

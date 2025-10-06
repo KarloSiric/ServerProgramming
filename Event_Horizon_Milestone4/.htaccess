@@ -1,19 +1,13 @@
-# Disable MultiViews (prevents Apache from guessing file names)
+# Working .htaccess for Solace
 Options -MultiViews
-
-# Always use Index.php as entry
 DirectoryIndex Index.php
 
-# Enable rewriting
 RewriteEngine On
+RewriteBase /~ks9700/iste-341/Event_Horizon_Milestone4/
 
-# Base path = your Solace project folder
-RewriteBase /~ks9700/iste-341/Milestone2/
+# Skip real files/folders
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
 
-# Skip rewriting if request is a real file or folder
-RewriteCond %{REQUEST_FILENAME} -f [OR]
-RewriteCond %{REQUEST_FILENAME} -d
-RewriteRule ^ - [L]
-
-# Route everything else into Index.php
-RewriteRule ^ Index.php [QSA,L]
+# Capture path and pass as url parameter
+RewriteRule ^(.*)$ Index.php?url=$1 [QSA,L]

@@ -1,13 +1,33 @@
 <?php
-declare(strict_types=1);
 
 class VenueController extends Controller
 {
-    public function index(): void
+    private $model;
+
+    public function __construct()
     {
-        $this->requireRole('admin');
-        $model = new VenueModel();
-        $venues = $model->all();
-        $this->render('venue/venues.php', ['venues' => $venues]);
+        Session::start();
+        
+        // Check if session expired
+        if (isset($_SESSION['user']) && Session::isExpired()) {
+            Session::destroy();
+        }
+        
+        $this->model = new VenueModel();
+    }
+
+    public function index()
+    {
+        if (!isset($_SESSION['user'])) {
+            header('Location: ' . PROJECT_URL . '/user/login');
+            exit;
+        }
+
+        $venues = $this->model->all();
+        $data = [
+            'user' => $_SESSION['user'],
+            'venues' => $venues
+        ];
+        $this->view($data);
     }
 }

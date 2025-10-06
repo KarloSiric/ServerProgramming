@@ -1,71 +1,115 @@
 <?php
 
-declare(strict_types=1);
-
 class UserController extends Controller
 {
-  public function login(): void
-  {
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-      $email = $_POST['email'] ?? '';
-      $password = $_POST['password'] ?? '';
+    private $userModel;
+    private $eventModel;
 
-      $model = new UserModel();
-      $user = $model->authenticate($email, $password);
-
-      if ($user) {
-        // Optional hardening (safe to keep or omit):
-        // session_regenerate_id(true);
-        $_SESSION['user'] = $user;
-
-        if ($user['role_name'] === 'admin') {
-          $this->redirect('event', 'index');
-        } elseif ($user['role_name'] === 'attendee') {
-          $this->redirect('attendee', 'dashboard');
-        } else {
-          echo "<p>Unknown role: " . htmlspecialchars($user['role_name']) . "</p>";
+    public function __construct()
+    {
+        Session::start();
+        
+        // Check if session expired (for protected pages)
+        if (isset($_SESSION['user']) && Session::isExpired()) {
+            Session::destroy();
         }
-        return;
-      } else {
-        $error = "Invalid email or password.";
-        $this->render('user/login.php', ['error' => $error]);
-        return;
-      }
+        
+        $this->userModel = new UserModel();
+        $this->eventModel = new EventModel();
     }
 
-    $this->render('user/login.php');
-  }
+    /* ---------- Auth ---------- */
 
-  public function logout(): void
-  {
-    // CHANGED per assignment: central Session::destroy() handles cleanup + redirect
-    Session::destroy();
-  }
+    public function login()
+    {
+        // If already logged in, redirect
+        if (isset($_SESSION['user'])) {
+            if ($_SESSION['user']['role_name'] === 'admin') {
+                header('Location: ' . PROJECT_URL . '/event/all');
+            } else {
+                header('Location: ' . PROJECT_URL . '/attendee/dashboard');
+            }
+            exit;
+        }
 
-  public function register(): void
-  {
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-      $d = [
-        'first_name' => trim($_POST['first_name'] ?? ''),
-        'last_name'  => trim($_POST['last_name'] ?? ''),
-        'email'      => trim($_POST['email'] ?? ''),
-        'username'   => trim($_POST['username'] ?? ''),
-        'password'   => $_POST['password'] ?? '',
-      ];
-      if (in_array('', $d, true)) {
-        $this->render('user/register.php', ['error' => 'Please fill all fields.']);
-        return;
-      }
-      try {
-        (new UserModel())->register($d);
-        // After register, push to login
-        $this->render('user/login.php', ['error' => 'Account created. Please sign in.']);
-        return;
-      } catch (Throwable $e) {
-        $this->render('user/register.php', ['error' => 'Email or username already in use.']);
-        return;
-      }
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $username = trim($_POST['username'] ?? '');
+            $password = trim($_POST['password'] ?? '');
+
+            $user = $this->userModel->authenticate($username, $password);
+
+            if ($user) {
+                $_SESSION['user'] = $user;
+
+                // Redirect based on role
+                if ($user['role_name'] === 'admin') {
+                    header('Location: ' . PROJECT_URL . '/event/all');
+                } else {
+                    header('Location: ' . PROJECT_URL . '/attendee/dashboard');
+                }
+                exit;
+            }
+
+            $this->view(['error' => 'Invalid username or password']);
+            return;
+        }
+
+        $this->view();
     }
-    $this->render('user/register.php');
-  }
+
+    public function register()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $data = [
+                'first_name' => trim($_POST['first_name'] ?? ''),
+                'last_name'  => trim($_POST['last_name'] ?? ''),
+                'email'      => trim($_POST['email'] ?? ''),
+                'username'   => trim($_POST['username'] ?? ''),
+                'password'   => trim($_POST['password'] ?? ''),
+                'role_id'    => (int)($_POST['role_id'] ?? 2),
+            ];
+
+            $result = $this->userModel->register($data);
+
+            if ($result === true) {
+                header('Location: ' . PROJECT_URL . '/user/login');
+                exit;
+            }
+
+            $roles = $this->userModel->getRoles();
+            $this->view([
+                'error' => $result ?: 'Registration failed.',
+                'roles' => $roles
+            ]);
+            return;
+        }
+
+        $roles = $this->userModel->getRoles();
+        $this->view(['roles' => $roles]);
+    }
+
+    public function logout()
+    {
+        Session::destroy();
+    }
+
+    /* ---------- Pages ---------- */
+
+    public function welcome()
+    {
+        if (!isset($_SESSION['user'])) {
+            header('Location: ' . PROJECT_URL . '/user/login');
+            exit;
+        }
+        $this->view(['user' => $_SESSION['user']]);
+    }
+
+    public function admin()
+    {
+        if (!isset($_SESSION['user']) || $_SESSION['user']['role_name'] !== 'admin') {
+            header('Location: ' . PROJECT_URL . '/user/login');
+            exit;
+        }
+        $this->view(['user' => $_SESSION['user']]);
+    }
 }
