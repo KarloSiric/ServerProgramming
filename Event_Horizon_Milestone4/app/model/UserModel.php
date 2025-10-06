@@ -1,9 +1,46 @@
 <?php
+/**
+ * UserModel.php - User Data Access Layer
+ * 
+ * Handles all database operations related to users (attendees) including:
+ * - User authentication and password verification
+ * - User registration with password hashing
+ * - Role management
+ * - Attendee list retrieval for events
+ * 
+ * Security Features:
+ * - Passwords are hashed using PHP's password_hash() function
+ * - Password verification uses password_verify() for timing-attack resistance
+ * - Prepared statements prevent SQL injection attacks
+ * 
+ * @author Karlo Siric
+ * @version 1.0
+ */
 
+/**
+ * Class UserModel
+ * 
+ * Model class for managing user/attendee data in the database.
+ * Extends the base Model class to inherit database connectivity.
+ */
 class UserModel extends Model
 {
     /**
-     * Authenticate user by username
+     * Authenticate user by username and password
+     * 
+     * Verifies user credentials against the database. Password is verified
+     * using password_verify() which compares the provided password against
+     * the stored hash in a timing-attack resistant manner.
+     * 
+     * The returned user array includes:
+     * - id: User's attendee_id
+     * - username: Login username
+     * - email: User's email address
+     * - role_name: User's role (admin, attendee, etc.)
+     * 
+     * @param string $username The username to authenticate
+     * @param string $password The plaintext password to verify
+     * @return array|null User data array on success, null on failure
      */
     public function authenticate(string $username, string $password): ?array
     {
@@ -15,6 +52,7 @@ class UserModel extends Model
         $stmt->execute([':un' => $username]);
         $row = $stmt->fetch();
         
+        // Verify password hash
         if ($row && password_verify($password, (string)$row['password'])) {
             return [
                 'id'        => (int)$row['attendee_id'],
@@ -27,16 +65,35 @@ class UserModel extends Model
     }
 
     /**
-     * Register new attendee - returns true on success, error string on failure
+     * Register a new user/attendee
+     * 
+     * Creates a new user account with hashed password. Performs validation
+     * and checks for duplicate usernames/emails before insertion.
+     * 
+     * Validation:
+     * - All required fields must be present (username, password, email)
+     * - Username and email must be unique
+     * 
+     * Password Security:
+     * - Uses password_hash() with PASSWORD_DEFAULT algorithm
+     * - Automatically selects strongest available algorithm
+     * - Handles salt generation and cost automatically
+     * 
+     * ID Generation:
+     * - Manually generates attendee_id using MAX(attendee_id) + 1
+     * - Works without AUTO_INCREMENT on the database column
+     * 
+     * @param array $d Associative array of user data (first_name, last_name, email, username, password, role_id)
+     * @return bool|string True on success, error message string on failure
      */
     public function register(array $d)
     {
-        // Basic validation
+        // Validate required fields
         if (empty($d['username']) || empty($d['password']) || empty($d['email'])) {
             return "All fields are required.";
         }
 
-        // Check if username or email already exists
+        // Check for duplicate username or email
         $sql = "SELECT COUNT(*) FROM attendee WHERE username = :un OR email = :em";
         $stmt = $this->db->prepare($sql);
         $stmt->execute([':un' => $d['username'], ':em' => $d['email']]);
@@ -44,12 +101,12 @@ class UserModel extends Model
             return "Username or email already exists.";
         }
 
-        // Get the next available attendee_id
+        // Generate next available attendee_id
         $sql = "SELECT COALESCE(MAX(attendee_id), 0) + 1 AS next_id FROM attendee";
         $stmt = $this->db->query($sql);
         $nextId = (int)$stmt->fetchColumn();
 
-        // Insert new user with explicit attendee_id
+        // Insert new user with hashed password
         $sql = "INSERT INTO attendee(attendee_id, first_name, last_name, email, username, password, role_id)
                 VALUES(:id, :fn, :ln, :email, :un, :pw, :role)";
         $stmt = $this->db->prepare($sql);
@@ -59,15 +116,24 @@ class UserModel extends Model
             ':ln'    => $d['last_name'] ?? '',
             ':email' => $d['email'],
             ':un'    => $d['username'],
-            ':pw'    => password_hash($d['password'], PASSWORD_DEFAULT),
-            ':role'  => $d['role_id'] ?? 2, // default attendee
+            ':pw'    => password_hash($d['password'], PASSWORD_DEFAULT),  // Hash password
+            ':role'  => $d['role_id'] ?? 2,  // Default to attendee role
         ]);
         
         return $success ? true : "Registration failed.";
     }
 
     /**
-     * Get all roles for registration form
+     * Get all available user roles
+     * 
+     * Retrieves the list of all roles from the database for use in
+     * registration forms or role management interfaces.
+     * 
+     * Typically returns roles like:
+     * - role_id: 1, name: 'admin'
+     * - role_id: 2, name: 'attendee'
+     * 
+     * @return array Array of role records with role_id and name
      */
     public function getRoles(): array
     {
@@ -77,7 +143,22 @@ class UserModel extends Model
     }
 
     /**
-     * Get attendees for an event
+     * Get list of attendees registered for an event
+     * 
+     * Retrieves all users who have registered for a specific event.
+     * Joins attendee_event table with attendee table to get user details.
+     * 
+     * Returned data includes:
+     * - attendee_id: User's unique ID
+     * - first_name: User's first name
+     * - last_name: User's last name
+     * - username: User's login username
+     * - email: User's email address
+     * 
+     * Results are sorted alphabetically by last name, then first name.
+     * 
+     * @param int $eventId The event ID to get attendees for
+     * @return array Array of attendee records
      */
     public function getAttendees(int $eventId): array
     {

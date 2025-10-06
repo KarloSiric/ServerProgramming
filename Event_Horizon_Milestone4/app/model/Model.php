@@ -1,63 +1,38 @@
 <?php
 /**
- * Base Model - aligned with professors structure
+ * Model.php - Base Model Class
+ * 
+ * Abstract base class for all model classes in the application.
+ * Provides database connection access to child model classes.
+ * 
+ * All models that interact with the database should extend this class
+ * to gain access to the shared PDO connection.
+ * 
+ * @author Karlo Siric
+ * @version 1.0
+ */
+
+/**
+ * Class Model
+ * 
+ * Base model class that provides database connectivity to all
+ * child model classes through protected property access.
  */
 class Model
 {
-    protected $db; // Database connection
+    /**
+     * @var PDO $db Database connection instance
+     */
+    protected $db;
 
+    /**
+     * Model constructor
+     * 
+     * Initializes the model with a database connection from the Database singleton.
+     * This connection is available to all child classes through $this->db.
+     */
     public function __construct()
     {
-        // Establish DB connection 
-        try {
-            $this->db = Database::getInstance()->getConnection();
-        } catch (PDOException $e) {
-            die("Database connection failed: " . $e->getMessage());
-        }
-    }
-
-    /**
-     * Sanitize input data
-     */
-    public function sanitize($data)
-    {
-        if (is_array($data)) {
-            foreach ($data as $key => $value) {
-                $data[$key] = $this->sanitize($value);
-            }
-        } else {
-            $data = htmlspecialchars(strip_tags(trim($data)));
-        }
-        return $data;
-    }
-
-    /**
-     * Validate input
-     */
-    protected function validate($data, array $rules): bool
-    {
-        foreach ($rules as $rule => $value) {
-            switch ($rule) {
-                case 'required':
-                    if (empty($data)) return false;
-                    break;
-                case 'min_length':
-                    if (strlen($data) < $value) return false;
-                    break;
-                case 'max_length':
-                    if (strlen($data) > $value) return false;
-                    break;
-                case 'numeric':
-                    if ($value && !is_numeric($data)) return false;
-                    break;
-                case 'email':
-                    if ($value && !filter_var($data, FILTER_VALIDATE_EMAIL)) return false;
-                    break;
-                case 'regex':
-                    if (!preg_match($value, $data)) return false;
-                    break;
-            }
-        }
-        return true;
+        $this->db = Database::getConnection();
     }
 }

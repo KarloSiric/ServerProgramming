@@ -1,50 +1,66 @@
 <?php
 /**
- * Database connection class (Singleton)
+ * Database.php - Database Connection Manager
+ * 
+ * Provides singleton pattern database connection using PDO.
+ * Reads database credentials from config.ini and establishes
+ * a MySQL connection with proper error handling.
+ * 
+ * @author Karlo Siric
+ * @version 1.0
+ */
+
+/**
+ * Class Database
+ * 
+ * Singleton class that manages a single PDO database connection
+ * throughout the application lifecycle.
  */
 class Database
 {
-    private static $instance = null;
-    private $pdo;
+    /**
+     * @var PDO|null $connection Singleton PDO instance
+     */
+    private static $connection = null;
 
-    private function __construct()
+    /**
+     * Get database connection instance
+     * 
+     * Returns the existing PDO connection or creates a new one if it doesn't exist.
+     * Uses singleton pattern to ensure only one database connection throughout the app.
+     * 
+     * Connection settings:
+     * - Reads credentials from CONFIG_PATH/config.ini
+     * - Uses UTF-8 character set
+     * - Sets error mode to exception for better error handling
+     * - Returns associative arrays by default
+     * 
+     * @return PDO Active database connection
+     * @throws PDOException If connection fails
+     */
+    public static function getConnection(): PDO
     {
-        $configFile = CONFIG_PATH . '/config.ini';
-        
-        if (!file_exists($configFile)) {
-            die("Config file not found at: $configFile");
-        }
-        
-        $config = parse_ini_file($configFile, true);
-        
-        if (!$config) {
-            die("Failed to parse config.ini");
+        if (self::$connection === null) {
+            // Read database configuration
+            $config = parse_ini_file(CONFIG_PATH . '/config.ini', true);
+            $db = $config['database'];
+
+            // Build DSN (Data Source Name)
+            $dsn = "mysql:host={$db['host']};dbname={$db['name']};charset=utf8mb4";
+
+            // Create PDO connection with options
+            self::$connection = new PDO(
+                $dsn,
+                $db['user'],
+                $db['pass'],
+                [
+                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,  // Throw exceptions on errors
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,  // Return associative arrays
+                    PDO::ATTR_EMULATE_PREPARES => false  // Use real prepared statements
+                ]
+            );
         }
 
-        $host = $config['database']['host'] ?? 'localhost';
-        $db   = $config['database']['name'] ?? '';
-        $user = $config['database']['user'] ?? '';
-        $pass = $config['database']['pass'] ?? '';
-
-        try {
-            $this->pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8", $user, $pass);
-            $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $this->pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            die("Database connection failed: " . $e->getMessage());
-        }
-    }
-
-    public static function getInstance()
-    {
-        if (self::$instance === null) {
-            self::$instance = new Database();
-        }
-        return self::$instance;
-    }
-
-    public function getConnection(): PDO
-    {
-        return $this->pdo;
+        return self::$connection;
     }
 }
