@@ -8,7 +8,7 @@ DirectoryIndex Index.php
 RewriteEngine On
 
 # Base path = your Solace project folder
-RewriteBase /~ks9700/iste-341/Milestone4/
+RewriteBase /~ks9700/iste-341/Milestone2/
 
 # Skip rewriting if request is a real file or folder
 RewriteCond %{REQUEST_FILENAME} -f [OR]

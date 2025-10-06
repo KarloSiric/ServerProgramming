@@ -1,0 +1,3378 @@
+==== app/assets/db.sql ====
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
+--
+-- Host: 127.0.0.1:3306
+-- Generation Time: Sep 25, 2025 at 09:52 PM
+-- Server version: 8.0.41
+-- PHP Version: 8.2.4
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Database: `event_horizon`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `attendee`
+--
+
+CREATE TABLE `attendee` (
+  `attendee_id` smallint UNSIGNED NOT NULL,
+  `first_name` varchar(45) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `last_name` varchar(45) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `username` varchar(16) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `role_id` smallint UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `attendee`
+--
+
+INSERT INTO `attendee` (`attendee_id`, `first_name`, `last_name`, `email`, `username`, `password`, `role_id`) VALUES
+(1, 'Kristina', 'Marasoviƒá', 'kristina.marasovic@croatia.rit.edu', 'km', '$2y$10$pdb9ubrwk26x8ldH06VP1uKXyAMm9D2F3O7XY8IkIsNW2g.DdsRs.', 1),
+(2, 'Kristina', 'Marasoviƒá', 'kxmzgr@rit.edu', 'kmu', '$2y$10$/TGAngySy2s117SvEBhQzuw5V2bVroaNbwuzgquvZ2MuhoWaD8HyS', 2),
+(12, 'Admin', 'User', 'admin@example.com', 'admin', '$2y$10$.tqtGw2JgG10XNWRanHC6OiBwnmrbnRiPN49MTQquD/dTRNNXeQHi', 1),
+(13, 'John', 'Doe', 'john@example.com', 'john', '$2y$10$.tqtGw2JgG10XNWRanHC6OiBwnmrbnRiPN49MTQquD/dTRNNXeQHi', 2),
+(14, 'John', 'Doe', 'john@example.com', 'jdoe', '$2y$10$.tqtGw2JgG10XNWRanHC6OiBwnmrbnRiPN49MTQquD/dTRNNXeQHi', 2),
+(15, 'Admin', 'Tester', 'admin2@example.com', 'admintest', '$2y$10$0s7aC7oSRxTZp0uMyvnmYOcN0iI.HaHTcsRZkFznx7CAWQGeFHpiq', 1),
+(17, 'Alice', 'Doe', 'alice@example.com', 'alice', '$2y$10$0s7aC7oSRxTZp0uMyvnmYOcN0iI.HaHTcsRZkFznx7CAWQGeFHpiq', 2);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `attendee_event`
+--
+
+CREATE TABLE `attendee_event` (
+  `attendee_id` smallint UNSIGNED NOT NULL,
+  `event_id` smallint UNSIGNED NOT NULL,
+  `paid` tinyint NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `attendee_event`
+--
+
+INSERT INTO `attendee_event` (`attendee_id`, `event_id`, `paid`) VALUES
+(1, 1, 1),
+(1, 2, 0),
+(2, 3, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `event`
+--
+
+CREATE TABLE `event` (
+  `event_id` smallint UNSIGNED NOT NULL,
+  `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `start_date` datetime NOT NULL,
+  `end_date` datetime NOT NULL,
+  `allowed_number` int NOT NULL,
+  `venue_id` smallint UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `event`
+--
+
+INSERT INTO `event` (`event_id`, `name`, `start_date`, `end_date`, `allowed_number`, `venue_id`) VALUES
+(1, 'Tech Conference 2025', '2025-10-10 09:00:00', '2025-10-12 18:00:00', 200, 1),
+(2, 'AI Workshop', '2025-11-05 10:00:00', '2025-11-05 16:00:00', 50, 2),
+(3, 'Music Festival', '2025-12-20 14:00:00', '2025-12-20 23:00:00', 500, 3),
+(4, 'Cybersecurity Forum', '2026-01-15 09:00:00', '2026-01-15 17:00:00', 150, 4),
+(5, 'StartUp Pitch Night', '2026-02-10 18:00:00', '2026-02-10 21:00:00', 120, 6),
+(6, 'Developer Meetup 2026', '2026-03-05 10:00:00', '2026-03-05 16:00:00', 200, 5),
+(7, 'Global Science Expo', '2026-04-12 09:00:00', '2026-04-14 18:00:00', 1000, 7),
+(8, 'Spring Jazz Concert', '2026-05-08 19:30:00', '2026-05-08 23:00:00', 300, 5),
+(9, 'Robotics Challenge', '2026-06-20 08:00:00', '2026-06-20 20:00:00', 500, 1),
+(10, 'Art & Culture Fest', '2026-07-15 12:00:00', '2026-07-17 22:00:00', 800, 7);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `events`
+--
+
+CREATE TABLE `events` (
+  `id` int NOT NULL,
+  `name` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
+  `description` text COLLATE utf8mb4_general_ci,
+  `date` date NOT NULL,
+  `capacity` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `role`
+--
+
+CREATE TABLE `role` (
+  `role_id` smallint UNSIGNED NOT NULL,
+  `name` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `role`
+--
+
+INSERT INTO `role` (`role_id`, `name`) VALUES
+(1, 'admin'),
+(2, 'attendee');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users`
+--
+
+CREATE TABLE `users` (
+  `id` int NOT NULL,
+  `username` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
+  `password` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `role` enum('admin','attendee') COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'attendee'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`id`, `username`, `password`, `role`) VALUES
+(1, 'admin', '$2y$10$qvW85rtK6Yv8JqP9pyHfvefNz3zM4VxlheSV1jQp07O6z7aTeqKhm', 'admin'),
+(2, 'john', '$2y$10$eB6r02gF7O4Bf6eSGY8I..MWlME8fXZZIbF7YCCZXeFbZzZ0lOHr2', 'attendee');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `venue`
+--
+
+CREATE TABLE `venue` (
+  `venue_id` smallint UNSIGNED NOT NULL,
+  `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `capacity` int DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `venue`
+--
+
+INSERT INTO `venue` (`venue_id`, `name`, `capacity`) VALUES
+(1, 'Main Hall', 200),
+(2, 'Conference Room A', 50),
+(3, 'Outdoor Stage', 500),
+(4, 'Innovation Hub', 150),
+(5, 'Auditorium B', 300),
+(6, 'Rooftop Terrace', 120),
+(7, 'City Expo Center', 1000);
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `attendee`
+--
+ALTER TABLE `attendee`
+  ADD PRIMARY KEY (`attendee_id`),
+  ADD KEY `idx_fk_role_id` (`role_id`);
+
+--
+-- Indexes for table `attendee_event`
+--
+ALTER TABLE `attendee_event`
+  ADD PRIMARY KEY (`attendee_id`,`event_id`),
+  ADD KEY `idx_fk_attendee_id` (`attendee_id`),
+  ADD KEY `idx_fk_event_id` (`event_id`);
+
+--
+-- Indexes for table `event`
+--
+ALTER TABLE `event`
+  ADD PRIMARY KEY (`event_id`),
+  ADD UNIQUE KEY `unique_name` (`name`),
+  ADD KEY `idx_fk_venue_id` (`venue_id`);
+
+--
+-- Indexes for table `events`
+--
+ALTER TABLE `events`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `role`
+--
+ALTER TABLE `role`
+  ADD PRIMARY KEY (`role_id`),
+  ADD UNIQUE KEY `unique_name` (`name`);
+
+--
+-- Indexes for table `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `username` (`username`);
+
+--
+-- Indexes for table `venue`
+--
+ALTER TABLE `venue`
+  ADD PRIMARY KEY (`venue_id`),
+  ADD UNIQUE KEY `name_UNIQUE` (`name`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `attendee`
+--
+ALTER TABLE `attendee`
+  MODIFY `attendee_id` smallint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+
+--
+-- AUTO_INCREMENT for table `event`
+--
+ALTER TABLE `event`
+  MODIFY `event_id` smallint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
+-- AUTO_INCREMENT for table `events`
+--
+ALTER TABLE `events`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `role`
+--
+ALTER TABLE `role`
+  MODIFY `role_id` smallint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `users`
+--
+ALTER TABLE `users`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `venue`
+--
+ALTER TABLE `venue`
+  MODIFY `venue_id` smallint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `attendee`
+--
+ALTER TABLE `attendee`
+  ADD CONSTRAINT `fk_attendee_role` FOREIGN KEY (`role_id`) REFERENCES `role` (`role_id`);
+
+--
+-- Constraints for table `attendee_event`
+--
+ALTER TABLE `attendee_event`
+  ADD CONSTRAINT `fk_attendee_event_attendee` FOREIGN KEY (`attendee_id`) REFERENCES `attendee` (`attendee_id`),
+  ADD CONSTRAINT `fk_attendee_event_event` FOREIGN KEY (`event_id`) REFERENCES `event` (`event_id`);
+
+--
+-- Constraints for table `event`
+--
+ALTER TABLE `event`
+  ADD CONSTRAINT `fk_event_venue` FOREIGN KEY (`venue_id`) REFERENCES `venue` (`venue_id`);
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+
+
+==== app/controller/AttendeeController.php ====
+<?php
+declare(strict_types=1);
+
+class AttendeeController extends Controller
+{
+    public function dashboard(): void
+    {
+        $this->requireLogin();
+        $this->render('attendee/dashboard.php', [
+            'user' => $_SESSION['user']
+        ]);
+    }
+}
+
+
+
+==== app/controller/Controller.php ====
+<?php
+declare(strict_types=1);
+
+abstract class Controller
+{
+    protected function render(string $viewRelPath, array $data = []): void
+    {
+        extract($data, EXTR_SKIP);
+
+        $file = VIEW_PATH . '/' . ltrim($viewRelPath, '/');
+        // Compatibility: check if string ends with ".php" without str_ends_with()
+        if (substr_compare($file, '.php', -4) !== 0) {
+            $file .= '.php';
+        }
+
+        if (!file_exists($file)) {
+            echo "<h1>View not found:</h1><p>{$file}</p>";
+            return;
+        }
+
+        include VIEW_PATH . '/inc/header.php';
+        include $file;
+        include VIEW_PATH . '/inc/footer.php';
+    }
+
+    protected function redirect(string $controller, string $action, array $params = []): void
+    {
+        $qs = http_build_query(array_merge(['controller' => $controller, 'action' => $action], $params));
+        header('Location: ' . BASE_PATH . '/Index.php?' . $qs);
+        exit;
+    }
+
+    protected function requireLogin(): void
+    {
+        if (empty($_SESSION['user'])) {
+            $this->redirect('user', 'login');
+        }
+    }
+
+    protected function requireRole(string $role): void
+    {
+        $this->requireLogin();
+        if (empty($_SESSION['user']['role_name']) || $_SESSION['user']['role_name'] !== $role) {
+            http_response_code(403);
+            echo "<h1>403 Forbidden</h1>";
+            exit;
+        }
+    }
+}
+
+
+
+==== app/controller/EventController.php ====
+<?php
+
+declare(strict_types=1);
+
+class EventController extends Controller
+{
+  public function index(): void
+  {
+    $model = new EventModel();
+    $events = $model->getAllEvents();
+    $this->render('event/events.php', ['events' => $events]);
+  }
+
+  // ----- admin-only CRUD -----
+  public function create(): void
+  {
+    $this->requireRole('admin');
+    $venues = (new VenueModel())->all();
+    $this->render('event/event-form.php', ['venues' => $venues]);
+  }
+
+  public function store(): void
+  {
+    $this->requireRole('admin');
+    $payload = [
+      'name'           => trim($_POST['name'] ?? ''),
+      'start_date'     => date('Y-m-d H:i:s', strtotime($_POST['start_date'] ?? '')),
+      'end_date'       => date('Y-m-d H:i:s', strtotime($_POST['end_date'] ?? '')),
+      'allowed_number' => (int)($_POST['allowed_number'] ?? 0),
+      'venue_id'       => (int)($_POST['venue_id'] ?? 0),
+    ];
+    (new EventModel())->create($payload);
+    $this->redirect('event', 'index');
+  }
+
+  public function edit(): void
+  {
+    $this->requireRole('admin');
+    $id = (int)($_GET['id'] ?? 0);
+    $model = new EventModel();
+    $event = $model->find($id);
+    if (!$event) {
+      $this->render('event/events.php', ['events' => []]);
+      return;
+    }
+    $venues = (new VenueModel())->all();
+    $this->render('event/event-form.php', ['event' => $event, 'venues' => $venues]);
+  }
+
+  public function update(): void
+  {
+    $this->requireRole('admin');
+    $id = (int)($_POST['id'] ?? 0);
+    $payload = [
+      'name'           => trim($_POST['name'] ?? ''),
+      'start_date'     => date('Y-m-d H:i:s', strtotime($_POST['start_date'] ?? '')),
+      'end_date'       => date('Y-m-d H:i:s', strtotime($_POST['end_date'] ?? '')),
+      'allowed_number' => (int)($_POST['allowed_number'] ?? 0),
+      'venue_id'       => (int)($_POST['venue_id'] ?? 0),
+    ];
+    (new EventModel())->update($id, $payload);
+    $this->redirect('event', 'index');
+  }
+
+  public function destroy(): void
+  {
+    $this->requireRole('admin');
+    $id = (int)($_POST['id'] ?? 0);
+    (new EventModel())->delete($id);
+    $this->redirect('event', 'index');
+  }
+
+  public function attendees(): void
+  {
+    // If you want this page restricted, leave this line.
+    // If you want attendees to view it too, change to $this->requireLogin();
+    $this->requireRole('admin');
+
+    $eventId = (int)($_GET['id'] ?? 0);
+    if ($eventId <= 0) {
+      $this->redirect('event', 'index');
+      return;
+    }
+
+    $event = (new EventModel())->find($eventId);
+    if (!$event) {
+      $this->redirect('event', 'index');
+      return;
+    }
+
+    $attendees = (new AttendeeModel())->byEvent($eventId);
+
+    $this->render('event/attendees.php', [
+      'event'     => $event,
+      'attendees' => $attendees,
+      'eventId'   => $eventId,
+    ]);
+  }
+}
+
+
+
+==== app/controller/UserController.php ====
+<?php
+
+declare(strict_types=1);
+
+class UserController extends Controller
+{
+  public function login(): void
+  {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+      $email = $_POST['email'] ?? '';
+      $password = $_POST['password'] ?? '';
+
+      $model = new UserModel();
+      $user = $model->authenticate($email, $password);
+
+      if ($user) {
+        $_SESSION['user'] = $user;
+
+        if ($user['role_name'] === 'admin') {
+          $this->redirect('event', 'index');
+        } elseif ($user['role_name'] === 'attendee') {
+          $this->redirect('attendee', 'dashboard');
+        } else {
+          echo "<p>Unknown role: " . htmlspecialchars($user['role_name']) . "</p>";
+        }
+        return;
+      } else {
+        $error = "Invalid email or password.";
+        $this->render('user/login.php', ['error' => $error]);
+        return;
+      }
+    }
+
+    $this->render('user/login.php');
+  }
+
+  public function logout(): void
+  {
+    session_destroy();
+    $this->redirect('user', 'login');
+  }
+
+  public function register(): void
+  {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+      $d = [
+        'first_name' => trim($_POST['first_name'] ?? ''),
+        'last_name'  => trim($_POST['last_name'] ?? ''),
+        'email'      => trim($_POST['email'] ?? ''),
+        'username'   => trim($_POST['username'] ?? ''),
+        'password'   => $_POST['password'] ?? '',
+      ];
+      if (in_array('', $d, true)) {
+        $this->render('user/register.php', ['error' => 'Please fill all fields.']);
+        return;
+      }
+      try {
+        (new UserModel())->register($d);
+        // After register, push to login
+        $this->render('user/login.php', ['error' => 'Account created. Please sign in.']);
+        return;
+      } catch (Throwable $e) {
+        $this->render('user/register.php', ['error' => 'Email or username already in use.']);
+        return;
+      }
+    }
+    $this->render('user/register.php');
+  }
+}
+
+
+
+==== app/controller/VenueController.php ====
+<?php
+declare(strict_types=1);
+
+class VenueController extends Controller
+{
+    public function index(): void
+    {
+        $this->requireRole('admin');
+        $model = new VenueModel();
+        $venues = $model->all();
+        $this->render('venue/venues.php', ['venues' => $venues]);
+    }
+}
+
+
+
+==== app/model/AttendeeModel.php ====
+<?php
+
+declare(strict_types=1);
+
+class AttendeeModel extends Model
+{
+  public function byEvent(int $eventId): array
+  {
+    $sql = "SELECT 
+                    a.attendee_id, 
+                    a.first_name, 
+                    a.last_name, 
+                    a.email,
+                    ae.paid
+                FROM attendee_event ae
+                JOIN attendee a ON a.attendee_id = ae.attendee_id
+                WHERE ae.event_id = :id
+                ORDER BY a.last_name, a.first_name";
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute([':id' => $eventId]);
+    return $stmt->fetchAll();
+  }
+}
+
+
+
+==== app/model/EventModel.php ====
+<?php
+
+declare(strict_types=1);
+
+class EventModel extends Model
+{
+  public function getAllEvents(): array
+  {
+    $sql = "SELECT e.event_id,
+                       e.name AS name,
+                       e.start_date,
+                       e.end_date,
+                       e.allowed_number,
+                       v.name AS venue_name,
+                       COUNT(ae.attendee_id) AS attendee_count
+                FROM event e
+                JOIN venue v ON e.venue_id = v.venue_id
+                LEFT JOIN attendee_event ae ON e.event_id = ae.event_id
+                GROUP BY e.event_id, e.name, e.start_date, e.end_date, e.allowed_number, v.name
+                ORDER BY e.start_date ASC";
+    $stmt = $this->db->query($sql);
+    return $stmt->fetchAll();
+  }
+
+  public function find(int $id): ?array
+  {
+    $sql = "SELECT e.event_id, e.name, e.start_date, e.end_date, e.allowed_number, e.venue_id
+                FROM event e WHERE e.event_id = :id";
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute([':id' => $id]);
+    $row = $stmt->fetch();
+    return $row ?: null;
+  }
+
+  public function create(array $e): int
+  {
+    $sql = "INSERT INTO event(name,start_date,end_date,allowed_number,venue_id)
+                VALUES(:name,:start,:end,:allowed,:venue)";
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute([
+      ':name'    => $e['name'],
+      ':start'   => $e['start_date'],
+      ':end'     => $e['end_date'],
+      ':allowed' => (int)$e['allowed_number'],
+      ':venue'   => (int)$e['venue_id'],
+    ]);
+    return (int)$this->db->lastInsertId();
+  }
+
+  public function update(int $id, array $e): void
+  {
+    $sql = "UPDATE event
+                   SET name=:name, start_date=:start, end_date=:end,
+                       allowed_number=:allowed, venue_id=:venue
+                 WHERE event_id=:id";
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute([
+      ':name'    => $e['name'],
+      ':start'   => $e['start_date'],
+      ':end'     => $e['end_date'],
+      ':allowed' => (int)$e['allowed_number'],
+      ':venue'   => (int)$e['venue_id'],
+      ':id'      => $id,
+    ]);
+  }
+
+  public function delete(int $id): void
+  {
+    $stmt = $this->db->prepare("DELETE FROM event WHERE event_id = :id");
+    $stmt->execute([':id' => $id]);
+  }
+}
+
+
+
+==== app/model/Model.php ====
+<?php
+declare(strict_types=1);
+
+abstract class Model
+{
+    protected PDO $db;
+
+    public function __construct()
+    {
+        $ini = parse_ini_file(CONFIG_PATH . '/config.ini', true);
+        if (!$ini || empty($ini['database'])) {
+            throw new RuntimeException('Invalid or missing config/config.ini');
+        }
+        $db = $ini['database'];
+        $dsn = sprintf('mysql:host=%s;dbname=%s;charset=utf8mb4', $db['host'], $db['name']);
+        $this->db = new PDO($dsn, $db['user'], $db['pass'], [
+            PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            PDO::ATTR_EMULATE_PREPARES   => false,
+        ]);
+    }
+}
+
+
+
+==== app/model/UserModel.php ====
+<?php
+
+declare(strict_types=1);
+
+class UserModel extends Model
+{
+  public function authenticate(string $email, string $password): ?array
+  {
+    $sql = "SELECT a.attendee_id,
+                       a.email,
+                       a.password,
+                       a.first_name,
+                       a.last_name,
+                       r.name AS role_name
+                FROM attendee a
+                JOIN role r ON a.role_id = r.role_id
+                WHERE a.email = :email
+                LIMIT 1";
+
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute([':email' => $email]);
+    $row = $stmt->fetch();
+
+    if ($row && password_verify($password, $row['password'])) {
+      return $row;
+    }
+
+    return null;
+  }
+
+  public function register(array $d): int
+  {
+    // role_id 2 = attendee
+    $sql = "INSERT INTO attendee(first_name,last_name,email,username,password,role_id)
+            VALUES(:fn,:ln,:email,:un,:pw,2)";
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute([
+      ':fn'    => $d['first_name'],
+      ':ln'    => $d['last_name'],
+      ':email' => $d['email'],
+      ':un'    => $d['username'],
+      ':pw'    => password_hash($d['password'], PASSWORD_DEFAULT),
+    ]);
+    return (int)$this->db->lastInsertId();
+  }
+}
+
+
+
+==== app/model/VenueModel.php ====
+<?php
+declare(strict_types=1);
+
+class VenueModel extends Model
+{
+    public function all(): array
+    {
+        $sql = "SELECT venue_id, name, capacity FROM venue ORDER BY name";
+        return $this->db->query($sql)->fetchAll();
+    }
+}
+
+
+
+==== app/view/attendee/dashboard.php ====
+<div class="card" style="max-width: 800px; margin: 3rem auto;">
+    <h2 style="font-size: 2.5rem; text-align: center; margin-bottom: 2rem;">
+        üåü Welcome to Your Portal, <?= htmlspecialchars($user['first_name']) ?>!
+    </h2>
+    
+    <div style="text-align: center; padding: 2rem; background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%); border-radius: 16px; margin-bottom: 2rem;">
+        <p style="font-size: 1.2rem; color: var(--text-secondary); margin-bottom: 1.5rem;">
+            Your personalized attendee dashboard for Event Horizon
+        </p>
+        <div style="display: flex; gap: 1rem; justify-content: center; align-items: center;">
+            <span style="background: var(--primary-gradient); color: white; padding: 0.5rem 1rem; border-radius: 25px; font-weight: 600;">
+                üìä Active Status
+            </span>
+            <span style="background: linear-gradient(135deg, #48bb78 0%, #38a169 100%); color: white; padding: 0.5rem 1rem; border-radius: 25px; font-weight: 600;">
+                ‚ú® Member Since <?= date('Y') ?>
+            </span>
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 2rem;">
+        <a href="Index.php?controller=event&action=index" 
+           style="display: flex; flex-direction: column; align-items: center; padding: 2rem; background: white; border: 2px solid var(--border-light); border-radius: 16px; text-decoration: none; transition: all 0.3s ease; text-align: center;">
+            <span style="font-size: 3rem; margin-bottom: 1rem;">üéâ</span>
+            <span style="color: var(--text-primary); font-weight: 700; font-size: 1.1rem;">Browse Events</span>
+            <span style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.5rem;">Discover and join exciting events</span>
+        </a>
+        
+        <a href="Index.php?controller=user&action=logout" 
+           style="display: flex; flex-direction: column; align-items: center; padding: 2rem; background: white; border: 2px solid var(--border-light); border-radius: 16px; text-decoration: none; transition: all 0.3s ease; text-align: center;">
+            <span style="font-size: 3rem; margin-bottom: 1rem;">üö™</span>
+            <span style="color: var(--text-primary); font-weight: 700; font-size: 1.1rem;">Sign Out</span>
+            <span style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.5rem;">Securely logout from your account</span>
+        </a>
+    </div>
+
+    <style>
+        a:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--accent-purple) !important;
+        }
+    </style>
+</div>
+
+
+
+==== app/view/event/attendees.php ====
+<section class="card" style="max-width: 100%; margin: 2rem 0;">
+  <h2>üë• Attendees for ‚Äú<?= htmlspecialchars($event['name']) ?>‚Äù</h2>
+
+  <div class="alert" style="display:flex;gap:1rem;flex-wrap:wrap;">
+    <span><strong>üÜî Event ID:</strong> #<?= (int)$eventId ?></span>
+    <span><strong>üìÖ Starts:</strong> <?= htmlspecialchars($event['start_date']) ?></span>
+    <span><strong>üèÅ Ends:</strong> <?= htmlspecialchars($event['end_date']) ?></span>
+    <span><strong>üìç Venue:</strong> <?= htmlspecialchars($event['venue_id']) ?></span>
+    <span><strong>üé´ Capacity:</strong> <?= (int)$event['allowed_number'] ?></span>
+  </div>
+
+  <?php
+  $total = count($attendees ?? []);
+  $paid  = array_sum(array_map(fn($a) => (int)($a['paid'] ?? 0), $attendees ?? []));
+  ?>
+  <div class="stats-row" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin:1rem 0;">
+    <div class="stat-card" style="background:rgba(102,126,234,0.1);border:1px solid var(--border-light);border-radius:16px;padding:1rem;text-align:center;">
+      <div class="stat-number" style="font-size:2rem;font-weight:900;"><?= $total ?></div>
+      <div class="stat-label" style="text-transform:uppercase;">Total Attendees</div>
+    </div>
+    <div class="stat-card" style="background:rgba(72,187,120,0.1);border:1px solid var(--border-light);border-radius:16px;padding:1rem;text-align:center;">
+      <div class="stat-number" style="font-size:2rem;font-weight:900;"><?= $paid ?></div>
+      <div class="stat-label" style="text-transform:uppercase;">Paid</div>
+    </div>
+    <div class="stat-card" style="background:rgba(237,137,54,0.1);border:1px solid var(--border-light);border-radius:16px;padding:1rem;text-align:center;">
+      <div class="stat-number" style="font-size:2rem;font-weight:900;"><?= max(0, $total - $paid) ?></div>
+      <div class="stat-label" style="text-transform:uppercase;">Unpaid</div>
+    </div>
+  </div>
+
+  <?php if (empty($attendees)): ?>
+    <div class="alert">
+      <p>No attendees have registered for this event yet.</p>
+    </div>
+  <?php else: ?>
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Full Name</th>
+            <th>Email</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php foreach ($attendees as $i => $a): ?>
+            <tr>
+              <td><?= $i + 1 ?></td>
+              <td>
+                <strong><?= htmlspecialchars($a['last_name']) ?>, <?= htmlspecialchars($a['first_name']) ?></strong>
+                <small class="event-id" style="display:block;color:var(--text-secondary);">ID: #<?= (int)$a['attendee_id'] ?></small>
+              </td>
+              <td>
+                <a href="mailto:<?= htmlspecialchars($a['email']) ?>"><?= htmlspecialchars($a['email']) ?></a>
+              </td>
+              <td>
+                <?php $isPaid = (int)$a['paid'] === 1; ?>
+                <span style="background: <?= $isPaid ? 'linear-gradient(135deg, #48bb78 0%, #38a169 100%)' : 'linear-gradient(135deg, #f56565 0%, #ed8936 100%)' ?>; color: white; padding: 0.25rem 0.75rem; border-radius: 20px; font-weight: 700;">
+                  <?= $isPaid ? 'Paid' : 'Unpaid' ?>
+                </span>
+              </td>
+            </tr>
+          <?php endforeach; ?>
+        </tbody>
+      </table>
+    </div>
+  <?php endif; ?>
+
+  <div style="display:flex;justify-content:space-between;gap:1rem;margin-top:1.25rem;">
+    <a class="back-button" href="<?= htmlspecialchars(BASE_PATH) ?>/Index.php?controller=event&action=index"
+      style="display:inline-flex;align-items:center;gap:.5rem;padding:.75rem 1.25rem;background:white;border:2px solid var(--border-light);border-radius:50px;color:var(--text-primary);text-decoration:none;font-weight:600;">
+      ‚Üê Back to Events
+    </a>
+  </div>
+</section>
+
+
+
+==== app/view/event/event-form.php ====
+<?php
+$isEdit = !empty($event);
+$action = $isEdit
+  ? (BASE_PATH . "/Index.php?controller=event&action=update")
+  : (BASE_PATH . "/Index.php?controller=event&action=store");
+?>
+<section class="card" style="max-width: 800px;">
+  <h2><?= $isEdit ? 'Edit Event' : 'Create Event' ?></h2>
+  <form class="form" method="post" action="<?= htmlspecialchars($action) ?>">
+    <?php if ($isEdit): ?>
+      <input type="hidden" name="id" value="<?= (int)$event['event_id'] ?>">
+    <?php endif; ?>
+
+    <label>Event Name
+      <input name="name" required value="<?= htmlspecialchars($event['name'] ?? '') ?>">
+    </label>
+
+    <label>Start Date & Time
+      <input type="datetime-local" name="start_date" required
+        value="<?= isset($event['start_date']) ? date('Y-m-d\TH:i', strtotime($event['start_date'])) : '' ?>">
+    </label>
+
+    <label>End Date & Time
+      <input type="datetime-local" name="end_date" required
+        value="<?= isset($event['end_date']) ? date('Y-m-d\TH:i', strtotime($event['end_date'])) : '' ?>">
+    </label>
+
+    <label>Allowed Number
+      <input type="number" name="allowed_number" min="0" required
+        value="<?= (int)($event['allowed_number'] ?? 0) ?>">
+    </label>
+
+    <label>Venue
+      <select name="venue_id" required>
+        <option value="" disabled <?= empty($event['venue_id']) ? 'selected' : '' ?>>Select a venue</option>
+        <?php foreach ($venues as $v): ?>
+          <option value="<?= (int)$v['venue_id'] ?>"
+            <?= isset($event['venue_id']) && (int)$event['venue_id'] === (int)$v['venue_id'] ? 'selected' : '' ?>>
+            <?= htmlspecialchars($v['name']) ?> (cap <?= (int)$v['capacity'] ?>)
+          </option>
+        <?php endforeach; ?>
+      </select>
+    </label>
+
+    <button><?= $isEdit ? 'Update Event' : 'Create Event' ?></button>
+  </form>
+  <p class="hint" style="margin-top:1rem">
+    <?= $isEdit ? 'Editing existing event.' : 'Fill details and save to add a new event.' ?>
+  </p>
+</section>
+
+
+
+==== app/view/event/events.php ====
+<div class="events-container">
+  <!-- Hero Section -->
+  <div class="hero-banner">
+    <div class="hero-content">
+      <h1 class="hero-title">
+        <span class="gradient-text">üéä Event Horizon</span>
+      </h1>
+      <p class="hero-subtitle">Discover Amazing Events & Experiences</p>
+      <div class="stats-row">
+        <div class="stat-card">
+          <span class="stat-number"><?= count($events ?? []) ?></span>
+          <span class="stat-label">Active Events</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number"><?= array_sum(array_column($events ?? [], 'attendee_count')) ?></span>
+          <span class="stat-label">Total Attendees</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number"><?= count(array_unique(array_column($events ?? [], 'venue_name'))) ?></span>
+          <span class="stat-label">Venues</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Events Card -->
+  <div class="card" style="max-width: 100%; margin: 2rem 0; padding: 0; overflow: hidden;">
+    <div class="card-header">
+      <h2>üéØ Upcoming Events</h2>
+      <div class="filter-buttons">
+        <button class="filter-btn active">All Events</button>
+        <button class="filter-btn">This Week</button>
+        <button class="filter-btn">This Month</button>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Event Name</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Location</th>
+            <th>Capacity Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php foreach ($events as $event): ?>
+            <?php
+            $percentage = ($event['allowed_number'] > 0) ?
+              round(($event['attendee_count'] / $event['allowed_number']) * 100) : 0;
+            $statusColor = $percentage >= 90 ? 'var(--danger)' : ($percentage >= 70 ? 'var(--warning)' : 'var(--success)');
+            ?>
+            <tr class="event-row">
+              <td>
+                <div class="event-name-cell">
+                  <span class="event-icon">üé™</span>
+                  <div>
+                    <strong><?= htmlspecialchars($event['name'] ?? '') ?></strong>
+                    <small class="event-id">ID: #<?= htmlspecialchars($event['event_id'] ?? '0') ?></small>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="date-cell">
+                  üìÖ <?= htmlspecialchars($event['start_date'] ?? '') ?>
+                </div>
+              </td>
+              <td>
+                <div class="date-cell">
+                  üèÅ <?= htmlspecialchars($event['end_date'] ?? '') ?>
+                </div>
+              </td>
+              <td>
+                <div class="location-cell">
+                  üìç <?= htmlspecialchars($event['venue_name'] ?? '') ?>
+                </div>
+              </td>
+              <td>
+                <div class="capacity-cell">
+                  <a href="<?= htmlspecialchars(BASE_PATH) ?>/Index.php?controller=event&action=attendees&id=<?= (int)($event['event_id'] ?? 0) ?>"
+                    class="capacity-link"
+                    style="text-decoration: none; display: block;">
+                    <div class="capacity-info">
+                      <span class="capacity-text" style="color: <?= $statusColor ?>">
+                        üë• <?= htmlspecialchars($event['attendee_count'] ?? '0') ?> / <?= htmlspecialchars($event['allowed_number'] ?? '') ?>
+                      </span>
+                      <div class="capacity-bar">
+                        <div class="capacity-fill" style="width: <?= $percentage ?>%; background: <?= $statusColor ?>;"></div>
+                      </div>
+                      <span class="capacity-percentage"><?= $percentage ?>% Full</span>
+                    </div>
+                  </a>
+                </div>
+              </td>
+              <td>
+                <div class="action-buttons">
+                  <a href="<?= htmlspecialchars(BASE_PATH) ?>/Index.php?controller=event&action=attendees&id=<?= (int)($event['event_id'] ?? 0) ?>"
+                    class="action-btn view-btn" title="View Attendees">
+                    üëÅÔ∏è
+                  </a>
+                  <a href="<?= htmlspecialchars(BASE_PATH) ?>/Index.php?controller=event&action=edit&id=<?= (int)($event['event_id'] ?? 0) ?>"
+                    class="action-btn edit-btn" title="Edit Event">‚úèÔ∏è</a>
+                </div>
+              </td>
+            </tr>
+          <?php endforeach; ?>
+        </tbody>
+      </table>
+    </div>
+
+    <?php if (empty($events)): ?>
+      <div class="empty-state">
+        <span class="empty-icon">üì≠</span>
+        <h3>No Events Found</h3>
+        <p>There are currently no events scheduled. Check back later!</p>
+      </div>
+    <?php endif; ?>
+  </div>
+
+  <!-- Quick Actions Card -->
+  <div class="quick-actions">
+    <h3>‚ö° Quick Actions</h3>
+    <div class="action-grid">
+      <button class="quick-action-card" onclick="window.location.href='<?= BASE_PATH ?>/Index.php?controller=event&action=create'">
+        <span class="action-icon">‚ûï</span>
+        <span class="action-text">Create New Event</span>
+      </button>
+      <button class="quick-action-card" onclick="window.location.href='<?= BASE_PATH ?>/Index.php?controller=venue&action=index'">
+        <span class="action-icon">üè¢</span>
+        <span class="action-text">Manage Venues</span>
+      </button>
+      <button class="quick-action-card" onclick="alert('Export feature coming soon!')">
+        <span class="action-icon">üìä</span>
+        <span class="action-text">Export Report</span>
+      </button>
+      <button class="quick-action-card" onclick="alert('Settings feature coming soon!')">
+        <span class="action-icon">‚öôÔ∏è</span>
+        <span class="action-text">Event Settings</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Events Page Specific Styles */
+  .events-container {
+    animation: fadeIn 0.5s ease-out;
+  }
+
+  .hero-banner {
+    background: var(--primary-gradient);
+    border-radius: 24px;
+    padding: 3rem;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-xl);
+  }
+
+  .hero-banner::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 60%;
+    height: 200%;
+    background: rgba(255, 255, 255, 0.1);
+    transform: rotate(45deg);
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    color: white;
+  }
+
+  .hero-title {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+    font-weight: 900;
+  }
+
+  .hero-subtitle {
+    font-size: 1.25rem;
+    opacity: 0.95;
+    margin-bottom: 2rem;
+  }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+
+  .stat-card {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 1.5rem;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+  }
+
+  .stat-card:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.25);
+  }
+
+  .stat-number {
+    display: block;
+    font-size: 2.5rem;
+    font-weight: 900;
+    margin-bottom: 0.5rem;
+  }
+
+  .stat-label {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem 2.5rem;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+    border-bottom: 2px solid var(--border-light);
+  }
+
+  .card-header h2 {
+    margin: 0;
+  }
+
+  .filter-buttons {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .filter-btn {
+    padding: 0.5rem 1rem;
+    border: 2px solid var(--border-light);
+    background: white;
+    border-radius: 25px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+  }
+
+  .filter-btn:hover,
+  .filter-btn.active {
+    background: var(--primary-gradient);
+    color: white;
+    border-color: transparent;
+    transform: translateY(-2px);
+  }
+
+  .event-row {
+    transition: all 0.3s ease;
+  }
+
+  .event-row:hover {
+    background: linear-gradient(90deg, rgba(102, 126, 234, 0.05) 0%, rgba(240, 147, 251, 0.05) 100%);
+  }
+
+  .event-name-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .event-icon {
+    font-size: 1.5rem;
+  }
+
+  .event-id {
+    display: block;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    font-weight: normal;
+    margin-top: 0.25rem;
+  }
+
+  .date-cell,
+  .location-cell {
+    font-weight: 500;
+  }
+
+  .capacity-cell {
+    position: relative;
+  }
+
+  .capacity-link {
+    transition: all 0.3s ease;
+  }
+
+  .capacity-link:hover .capacity-info {
+    transform: scale(1.05);
+  }
+
+  .capacity-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+  }
+
+  .capacity-text {
+    font-weight: 700;
+    font-size: 1rem;
+  }
+
+  .capacity-bar {
+    width: 120px;
+    height: 8px;
+    background: var(--border-light);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .capacity-fill {
+    height: 100%;
+    transition: width 0.5s ease;
+    border-radius: 10px;
+  }
+
+  .capacity-percentage {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .action-btn {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    border: 2px solid var(--border-light);
+    background: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    font-size: 1.1rem;
+    text-decoration: none;
+  }
+
+  .view-btn:hover {
+    background: var(--primary-gradient);
+    border-color: transparent;
+    transform: scale(1.1);
+  }
+
+  .edit-btn:hover {
+    background: var(--secondary-gradient);
+    border-color: transparent;
+    transform: scale(1.1);
+  }
+
+  .empty-state {
+    padding: 4rem 2rem;
+    text-align: center;
+  }
+
+  .empty-icon {
+    font-size: 4rem;
+    display: block;
+    margin-bottom: 1rem;
+  }
+
+  .empty-state h3 {
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+  }
+
+  .empty-state p {
+    color: var(--text-secondary);
+  }
+
+  .quick-actions {
+    background: white;
+    border-radius: 24px;
+    padding: 2rem;
+    margin-top: 2rem;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-light);
+  }
+
+  .quick-actions h3 {
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
+  }
+
+  .action-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  .quick-action-card {
+    padding: 1.5rem;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+    border: 2px solid var(--border-light);
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .quick-action-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+    background: var(--primary-gradient);
+    color: white;
+    border-color: transparent;
+  }
+
+  .action-icon {
+    font-size: 2rem;
+  }
+
+  .action-text {
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .hero-title {
+      font-size: 2rem;
+    }
+
+    .card-header {
+      flex-direction: column;
+      gap: 1rem;
+      align-items: stretch;
+    }
+
+    .filter-buttons {
+      justify-content: center;
+    }
+
+    .capacity-bar {
+      width: 80px;
+    }
+
+    .action-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>
+
+
+
+==== app/view/event/venues.php ====
+<section class="card" style="max-width: 100%; margin: 2rem 0;">
+  <h2>üèõÔ∏è Event Venues Directory</h2>
+  <?php if (empty($venues)): ?>
+    <div class="alert">
+      <p>No venues are currently available in the system.</p>
+    </div>
+  <?php else: ?>
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Venue Location</th>
+          <th>Guest Capacity</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php foreach ($venues as $v): ?>
+          <tr>
+            <td>
+              <strong>üè¢ <?= htmlspecialchars($v['name']) ?></strong>
+            </td>
+            <td>
+              <span style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 0.25rem 0.75rem; border-radius: 20px; font-weight: 600;">
+                üë• <?= (int)$v['capacity'] ?> guests
+              </span>
+            </td>
+          </tr>
+        <?php endforeach; ?>
+      </tbody>
+    </table>
+  </div>
+  <?php endif; ?>
+</section>
+
+
+
+==== app/view/inc/footer.php ====
+<?php
+?>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <small>&copy; <?= date('Y') ?> Event Horizon - Developed by Karlo Siric | All rights reserved</small>
+  </div>
+</footer>
+</body>
+</html>
+
+
+
+==== app/view/inc/header.php ====
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Horizon - Modern Event Management</title>
+  <link rel="stylesheet" href="<?= BASE_PATH ?>/public/css/style.css">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>üåå</text></svg>">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <div class="header-row">
+        <a href="<?= BASE_PATH ?>/Index.php" class="brand-link">Event Horizon</a>
+        <nav class="main-nav">
+          <a href="<?= BASE_PATH ?>/Index.php?controller=user&action=login">Sign In</a>
+          <a href="<?= BASE_PATH ?>/Index.php?controller=event&action=index">Browse Events</a>
+          <a href="<?= BASE_PATH ?>/Index.php?controller=venue&action=index">Explore Venues</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+  <main class="container">
+
+
+
+==== app/view/user/admin.php ====
+<?php $u = $_SESSION['user'] ?? ['username'=>'admin']; ?>
+<nav style="width: 100%; padding: 1.25rem 2rem; background: var(--primary-gradient); color: white; border-radius: 16px; margin-bottom: 2rem; box-shadow: var(--shadow-lg);">
+  <div style="display: flex; justify-content: space-between; align-items: center;">
+    <strong style="font-size: 1.5rem; font-weight: 800; display: flex; align-items: center; gap: 0.5rem;">
+      <span>‚ö°</span> Admin Control Center
+    </strong>
+    <span style="display: flex; align-items: center; gap: 1.5rem;">
+      <span style="background: rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 25px; font-weight: 600;">
+        üë§ <?= htmlspecialchars($u['username']) ?>
+      </span>
+      <a href="index.php?controller=user&action=logout" 
+         style="color: white; text-decoration: none; background: rgba(255,255,255,0.2); padding: 0.5rem 1.25rem; border-radius: 25px; font-weight: 600; transition: all 0.3s ease;">
+        üö™ Sign Out
+      </a>
+    </span>
+  </div>
+</nav>
+
+<main style="padding: 0;">
+  <div class="card" style="max-width: 100%; margin: 0;">
+    <h2 style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 2rem;">
+      <span>üìÖ</span> Event Management Dashboard
+    </h2>
+
+    <?php if (empty($events)): ?>
+      <div class="alert">
+        <p>No events have been created yet. Start by adding your first event!</p>
+      </div>
+    <?php else: ?>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Event Name</th>
+              <th>Start Date</th>
+              <th>End Date</th>
+              <th>Venue</th>
+              <th>Registration Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php foreach ($events as $e): ?>
+              <tr>
+                <td>
+                  <strong style="color: var(--accent-purple);">
+                    üéØ <?= htmlspecialchars($e['event_name']) ?>
+                  </strong>
+                </td>
+                <td>
+                  <span style="display: flex; align-items: center; gap: 0.5rem;">
+                    üìÖ <?= htmlspecialchars($e['start_date']) ?>
+                  </span>
+                </td>
+                <td>
+                  <span style="display: flex; align-items: center; gap: 0.5rem;">
+                    üèÅ <?= htmlspecialchars($e['end_date']) ?>
+                  </span>
+                </td>
+                <td>
+                  <span style="display: flex; align-items: center; gap: 0.5rem;">
+                    üìç <?= htmlspecialchars($e['venue_name']) ?>
+                  </span>
+                </td>
+                <td>
+                  <a href="index.php?controller=user&action=attendees&id=<?= (int)$e['event_id'] ?>"
+                     style="display: inline-block; padding: 0.5rem 1rem; background: <?= ($e['registered'] >= $e['allowed_number']) ? 'linear-gradient(135deg, #f56565 0%, #ed8936 100%)' : 'linear-gradient(135deg, #48bb78 0%, #38a169 100%)' ?>; color: white; border-radius: 25px; text-decoration: none; font-weight: 600; transition: all 0.3s ease;">
+                    üë• <?= (int)$e['registered'] ?>/<?= (int)$e['allowed_number'] ?> Registered
+                  </a>
+                </td>
+              </tr>
+            <?php endforeach; ?>
+          </tbody>
+        </table>
+      </div>
+    <?php endif; ?>
+  </div>
+</main>
+
+
+
+==== app/view/user/attendee.php ====
+<div class="todo-container">
+    <div class="todo-card">
+        <div class="todo-header">
+            <span class="todo-icon">üöß</span>
+            <h1 class="todo-title">TODO</h1>
+            <span class="todo-icon">üöß</span>
+        </div>
+        
+        <div class="todo-content">
+            <div class="event-info-badge">
+                <span class="badge-label">Event ID:</span>
+                <span class="badge-value">#<?= (int)($eventId ?? $_GET['id'] ?? 0) ?></span>
+            </div>
+            
+            <div class="todo-message">
+                <h2>Attendee Management System</h2>
+                <p class="todo-status">üî® Under Construction</p>
+                <p class="todo-description">
+                    This feature is currently being developed and will be available in the next milestone.
+                </p>
+            </div>
+            
+            <div class="feature-preview">
+                <h3>Coming Soon:</h3>
+                <div class="feature-grid">
+                    <div class="feature-item">
+                        <span class="feature-emoji">üìã</span>
+                        <span>Complete attendee list</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-emoji">‚úâÔ∏è</span>
+                        <span>Email notifications</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-emoji">üìä</span>
+                        <span>Attendance analytics</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-emoji">üé´</span>
+                        <span>Check-in system</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-emoji">üì±</span>
+                        <span>QR code scanning</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-emoji">üí≥</span>
+                        <span>Payment tracking</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="progress-indicator">
+                <span class="progress-label">Development Progress</span>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 35%;"></div>
+                </div>
+                <span class="progress-text">35% Complete</span>
+            </div>
+        </div>
+        
+        <div class="todo-footer">
+            <a href="<?= htmlspecialchars(BASE_PATH) ?>/Index.php?controller=user&action=admin" 
+               class="back-button">
+                <span>‚Üê</span> Back to Admin Panel
+            </a>
+            <button class="notify-button" onclick="alert('You will be notified when this feature is ready!')">
+                üîî Notify Me When Ready
+            </button>
+        </div>
+    </div>
+    
+    <!-- Decorative elements -->
+    <div class="floating-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
+</div>
+
+<style>
+/* Using the same styles from event/attendees.php */
+.todo-container {
+    min-height: calc(100vh - 300px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 2rem;
+}
+
+.todo-card {
+    background: white;
+    border-radius: 32px;
+    box-shadow: 0 20px 60px rgba(102, 126, 234, 0.15);
+    max-width: 800px;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    animation: slideUp 0.6s ease-out;
+}
+
+.todo-header {
+    background: var(--primary-gradient);
+    color: white;
+    padding: 3rem 2rem;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.todo-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 10px,
+        rgba(255, 255, 255, 0.05) 10px,
+        rgba(255, 255, 255, 0.05) 20px
+    );
+    animation: slide 20s linear infinite;
+}
+
+@keyframes slide {
+    0% {
+        transform: translate(0, 0);
+    }
+    100% {
+        transform: translate(50px, 50px);
+    }
+}
+
+.todo-icon {
+    font-size: 3rem;
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.todo-title {
+    font-size: 4rem;
+    font-weight: 900;
+    letter-spacing: 2px;
+    margin: 0;
+    position: relative;
+    z-index: 1;
+}
+
+.todo-content {
+    padding: 3rem 2rem;
+}
+
+.event-info-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    padding: 0.75rem 1.5rem;
+    border-radius: 50px;
+    margin-bottom: 2rem;
+}
+
+.badge-label {
+    color: var(--text-secondary);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+}
+
+.badge-value {
+    color: var(--accent-purple);
+    font-weight: 900;
+    font-size: 1.1rem;
+}
+
+.todo-message {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.todo-message h2 {
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    font-size: 2rem;
+}
+
+.todo-status {
+    color: var(--warning);
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+.todo-description {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+.feature-preview {
+    background: var(--bg-main);
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.feature-preview h3 {
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-size: 1.3rem;
+}
+
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: white;
+    border-radius: 12px;
+    border: 2px solid var(--border-light);
+    transition: all 0.3s ease;
+}
+
+.feature-item:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--accent-purple);
+}
+
+.feature-emoji {
+    font-size: 1.5rem;
+}
+
+.progress-indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 2rem;
+}
+
+.progress-label {
+    color: var(--text-secondary);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+}
+
+.progress-bar {
+    width: 100%;
+    max-width: 400px;
+    height: 12px;
+    background: var(--border-light);
+    border-radius: 50px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--primary-gradient);
+    border-radius: 50px;
+    position: relative;
+    animation: progressPulse 2s ease-in-out infinite;
+}
+
+@keyframes progressPulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.8;
+    }
+}
+
+.progress-text {
+    color: var(--accent-purple);
+    font-weight: 700;
+}
+
+.todo-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+    border-top: 2px solid var(--border-light);
+}
+
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: white;
+    border: 2px solid var(--border-light);
+    border-radius: 50px;
+    color: var(--text-primary);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.back-button:hover {
+    background: var(--primary-gradient);
+    color: white;
+    border-color: transparent;
+    transform: translateX(-5px);
+}
+
+.notify-button {
+    padding: 0.75rem 1.5rem;
+    background: var(--secondary-gradient);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+}
+
+.notify-button:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+}
+
+.floating-shapes {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: -1;
+}
+
+.shape {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.1;
+}
+
+.shape-1 {
+    width: 200px;
+    height: 200px;
+    background: var(--primary-gradient);
+    top: 10%;
+    left: -100px;
+    animation: float 15s ease-in-out infinite;
+}
+
+.shape-2 {
+    width: 150px;
+    height: 150px;
+    background: var(--secondary-gradient);
+    bottom: 10%;
+    right: -75px;
+    animation: float 20s ease-in-out infinite reverse;
+}
+
+.shape-3 {
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+    top: 50%;
+    right: 10%;
+    animation: float 10s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0) rotate(0deg);
+    }
+    50% {
+        transform: translateY(-30px) rotate(180deg);
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .todo-title {
+        font-size: 3rem;
+    }
+    
+    .todo-header {
+        gap: 1rem;
+        padding: 2rem 1rem;
+    }
+    
+    .feature-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .todo-footer {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .back-button,
+    .notify-button {
+        width: 100%;
+        justify-content: center;
+    }
+}
+</style>
+
+
+
+==== app/view/user/login.php ====
+<div class="login-container">
+  <!-- Animated Background -->
+  <div class="animated-bg">
+    <div class="gradient-circle circle-1"></div>
+    <div class="gradient-circle circle-2"></div>
+    <div class="gradient-circle circle-3"></div>
+  </div>
+
+  <!-- Login Card -->
+  <section class="login-card">
+    <!-- Logo Section -->
+    <div class="logo-section">
+      <div class="logo-wrapper">
+        <span class="logo-icon">üåå</span>
+        <h1 class="logo-text">Event Horizon</h1>
+      </div>
+      <p class="tagline">Your Gateway to Amazing Events</p>
+    </div>
+
+    <!-- Welcome Message -->
+    <div class="welcome-section">
+      <h2 class="welcome-title">Welcome Back!</h2>
+      <p class="welcome-subtitle">Sign in to continue to your dashboard</p>
+    </div>
+
+    <?php if (!empty($error)): ?>
+      <div class="alert-error animated-alert">
+        <span class="alert-icon">‚ö†Ô∏è</span>
+        <?= htmlspecialchars($error) ?>
+      </div>
+    <?php endif; ?>
+
+    <!-- Login Form -->
+    <form method="post" action="<?= htmlspecialchars(BASE_PATH) ?>/Index.php?controller=user&action=login" class="login-form">
+      <div class="form-group">
+        <label for="email">
+          <span class="label-icon">‚úâÔ∏è</span>
+          Email Address
+        </label>
+        <input type="email"
+          id="email"
+          name="email"
+          required
+          placeholder="your@email.com"
+          autocomplete="email">
+        <div class="input-highlight"></div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">
+          <span class="label-icon">üîí</span>
+          Password
+        </label>
+        <input type="password"
+          id="password"
+          name="password"
+          required
+          placeholder="Enter your password"
+          autocomplete="current-password">
+        <div class="input-highlight"></div>
+      </div>
+
+      <!-- Remember Me & Forgot Password -->
+      <div class="form-options">
+        <label class="checkbox-wrapper">
+          <input type="checkbox" name="remember" id="remember">
+          <span class="checkbox-custom"></span>
+          <span class="checkbox-label">Remember me</span>
+        </label>
+        <a href="#" class="forgot-link" onclick="alert('Password reset feature coming soon!'); return false;">
+          Forgot Password?
+        </a>
+      </div>
+
+      <button type="submit" class="login-button">
+        <span class="button-text">Sign In to Event Horizon</span>
+        <span class="button-icon">‚Üí</span>
+      </button>
+    </form>
+
+    <!-- Info Cards -->
+    <div class="info-cards">
+      <div class="info-card admin-card">
+        <span class="card-icon">üë®‚Äçüíº</span>
+        <div class="card-content">
+          <strong>Administrators</strong>
+          <small>Access the Events Dashboard</small>
+        </div>
+      </div>
+      <div class="info-card attendee-card">
+        <span class="card-icon">üë•</span>
+        <div class="card-content">
+          <strong>Attendees</strong>
+          <small>View your personalized portal</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Links -->
+    <div class="login-footer">
+      <p class="footer-text">
+        Don't have an account?
+        <a href="<?= htmlspecialchars(BASE_PATH) ?>/Index.php?controller=user&action=register" class="register-link">
+          Create one now
+        </a>
+      </p>
+    </div>
+
+    <!-- Decorative Elements -->
+    <div class="corner-decoration top-left"></div>
+    <div class="corner-decoration top-right"></div>
+    <div class="corner-decoration bottom-left"></div>
+    <div class="corner-decoration bottom-right"></div>
+  </section>
+</div>
+
+<style>
+  .login-container {
+    min-height: calc(100vh - 200px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    position: relative;
+  }
+
+  .animated-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+    overflow: hidden;
+  }
+
+  .gradient-circle {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.4;
+    animation: floatCircle 15s ease-in-out infinite;
+  }
+
+  .circle-1 {
+    width: 400px;
+    height: 400px;
+    background: var(--primary-gradient);
+    top: -200px;
+    left: -200px;
+  }
+
+  .circle-2 {
+    width: 300px;
+    height: 300px;
+    background: var(--secondary-gradient);
+    bottom: -150px;
+    right: -150px;
+    animation-delay: 5s;
+  }
+
+  .circle-3 {
+    width: 250px;
+    height: 250px;
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation-delay: 10s;
+  }
+
+  @keyframes floatCircle {
+
+    0%,
+    100% {
+      transform: translate(0, 0) scale(1);
+    }
+
+    33% {
+      transform: translate(30px, -30px) scale(1.1);
+    }
+
+    66% {
+      transform: translate(-30px, 30px) scale(0.9);
+    }
+  }
+
+  .login-card {
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(20px);
+    border-radius: 32px;
+    padding: 3rem;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.12);
+    max-width: 500px;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    animation: cardEntry 0.6s ease-out;
+  }
+
+  @keyframes cardEntry {
+    from {
+      opacity: 0;
+      transform: translateY(30px) scale(0.95);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  .logo-section {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .logo-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .logo-icon {
+    font-size: 3rem;
+    animation: rotate 20s linear infinite;
+  }
+
+  @keyframes rotate {
+    from {
+      transform: rotate(0deg);
+    }
+
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .logo-text {
+    font-size: 2rem;
+    font-weight: 900;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0;
+  }
+
+  .tagline {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    margin: 0;
+  }
+
+  .welcome-section {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .welcome-title {
+    font-size: 1.75rem;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+  }
+
+  .welcome-subtitle {
+    color: var(--text-secondary);
+    font-size: 1rem;
+  }
+
+  .login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .form-group {
+    position: relative;
+  }
+
+  .form-group label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .label-icon {
+    font-size: 1rem;
+  }
+
+  .form-group input {
+    width: 100%;
+    padding: 1.25rem 1.5rem;
+    border-radius: 16px;
+    border: 2px solid var(--border-light);
+    background: var(--bg-main);
+    color: var(--text-primary);
+    outline: none;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    font-weight: 500;
+  }
+
+  .form-group input:focus {
+    border-color: transparent;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+  }
+
+  .form-group input:focus+.input-highlight {
+    width: 100%;
+  }
+
+  .input-highlight {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    width: 0;
+    background: var(--primary-gradient);
+    transition: width 0.3s ease;
+    border-radius: 0 0 16px 16px;
+  }
+
+  .form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0.5rem 0;
+  }
+
+  .checkbox-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+  }
+
+  .checkbox-wrapper input[type="checkbox"] {
+    display: none;
+  }
+
+  .checkbox-custom {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--border-light);
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .checkbox-wrapper input[type="checkbox"]:checked+.checkbox-custom {
+    background: var(--primary-gradient);
+    border-color: transparent;
+  }
+
+  .checkbox-wrapper input[type="checkbox"]:checked+.checkbox-custom::after {
+    content: '‚úì';
+    position: absolute;
+    color: white;
+    font-size: 14px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .checkbox-label {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+  }
+
+  .forgot-link {
+    color: var(--accent-purple);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+
+  .forgot-link:hover {
+    text-decoration: underline;
+  }
+
+  .login-button {
+    background: var(--primary-gradient);
+    color: white;
+    border: none;
+    border-radius: 16px;
+    padding: 1.25rem;
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    position: relative;
+    overflow: hidden;
+    margin-top: 1rem;
+  }
+
+  .login-button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+  }
+
+  .login-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+  }
+
+  .login-button:hover::before {
+    width: 400px;
+    height: 400px;
+  }
+
+  .login-button:hover .button-icon {
+    transform: translateX(5px);
+  }
+
+  .button-text {
+    position: relative;
+    z-index: 1;
+  }
+
+  .button-icon {
+    font-size: 1.3rem;
+    transition: transform 0.3s ease;
+    position: relative;
+    z-index: 1;
+  }
+
+  .info-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  .info-card {
+    padding: 1rem;
+    background: var(--bg-main);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: all 0.3s ease;
+    border: 2px solid var(--border-light);
+  }
+
+  .info-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .admin-card:hover {
+    border-color: var(--accent-purple);
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+  }
+
+  .attendee-card:hover {
+    border-color: var(--accent-pink);
+    background: linear-gradient(135deg, rgba(240, 147, 251, 0.05) 0%, rgba(245, 87, 108, 0.05) 100%);
+  }
+
+  .card-icon {
+    font-size: 1.5rem;
+  }
+
+  .card-content {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card-content strong {
+    font-size: 0.9rem;
+    color: var(--text-primary);
+  }
+
+  .card-content small {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+  }
+
+  .login-footer {
+    text-align: center;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid var(--border-light);
+  }
+
+  .footer-text {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+  }
+
+  .register-link {
+    color: var(--accent-purple);
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+
+  .register-link:hover {
+    text-decoration: underline;
+  }
+
+  .animated-alert {
+    animation: shakeAlert 0.5s ease-out;
+  }
+
+  @keyframes shakeAlert {
+
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+
+    10%,
+    30%,
+    50%,
+    70%,
+    90% {
+      transform: translateX(-5px);
+    }
+
+    20%,
+    40%,
+    60%,
+    80% {
+      transform: translateX(5px);
+    }
+  }
+
+  .corner-decoration {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    opacity: 0.05;
+  }
+
+  .top-left {
+    top: 0;
+    left: 0;
+    background: var(--primary-gradient);
+    border-radius: 0 0 100% 0;
+  }
+
+  .top-right {
+    top: 0;
+    right: 0;
+    background: var(--secondary-gradient);
+    border-radius: 0 0 0 100%;
+  }
+
+  .bottom-left {
+    bottom: 0;
+    left: 0;
+    background: var(--secondary-gradient);
+    border-radius: 0 100% 0 0;
+  }
+
+  .bottom-right {
+    bottom: 0;
+    right: 0;
+    background: var(--primary-gradient);
+    border-radius: 100% 0 0 0;
+  }
+
+  @media (max-width: 768px) {
+    .login-card {
+      padding: 2rem;
+    }
+
+    .info-cards {
+      grid-template-columns: 1fr;
+    }
+
+    .form-options {
+      flex-direction: column;
+      gap: 1rem;
+      align-items: stretch;
+    }
+  }
+</style>
+
+
+
+==== app/view/user/register.php ====
+<section class="card" style="max-width: 600px;">
+  <h2>Create Account</h2>
+  <?php if (!empty($error)): ?>
+    <div class="alert-error"><?= htmlspecialchars($error) ?></div>
+  <?php endif; ?>
+  <form class="form" method="post" action="<?= htmlspecialchars(BASE_PATH) ?>/Index.php?controller=user&action=register">
+    <label>First Name
+      <input name="first_name" required>
+    </label>
+    <label>Last Name
+      <input name="last_name" required>
+    </label>
+    <label>Email
+      <input type="email" name="email" required>
+    </label>
+    <label>Username
+      <input name="username" required>
+    </label>
+    <label>Password
+      <input type="password" name="password" required>
+    </label>
+    <button>Create Account</button>
+  </form>
+  <p class="hint">Already have an account? <a href="<?= htmlspecialchars(BASE_PATH) ?>/Index.php?controller=user&action=login">Sign in</a></p>
+</section>
+
+
+
+==== app/view/user/welcome.php ====
+<div class="card" style="max-width: 600px; margin: 4rem auto; text-align: center;">
+  <h2 style="font-size: 2.5rem; margin-bottom: 2rem;">
+    üéâ Welcome to Event Horizon!
+  </h2>
+  <p style="font-size: 1.25rem; color: var(--text-secondary); margin-bottom: 2rem;">
+    Hello, <span style="background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700;">
+      <?= htmlspecialchars($_SESSION['user']['username'] ?? 'friend') ?>
+    </span>!
+  </p>
+  <p style="margin-bottom: 2rem; color: var(--text-secondary);">
+    You're successfully logged into Event Horizon. Ready to explore amazing events?
+  </p>
+  <a href="index.php?controller=user&action=dashboard" 
+     style="display: inline-block; padding: 1rem 2rem; background: var(--primary-gradient); color: white; text-decoration: none; border-radius: 50px; font-weight: 700; font-size: 1.1rem; box-shadow: var(--shadow-md); transition: all 0.3s ease;">
+    üöÄ Launch Your Dashboard
+  </a>
+</div>
+
+
+
+==== app/view/venue/venues.php ====
+<section class="card" style="max-width: 100%; margin: 2rem 0;">
+  <h2>üèõÔ∏è Available Venues</h2>
+  <?php if (empty($venues)): ?>
+    <div class="alert">
+      <p>No venues are currently available. Please check back later!</p>
+    </div>
+  <?php else: ?>
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Venue Name</th>
+          <th>Maximum Capacity</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php foreach ($venues as $v): ?>
+          <tr>
+            <td>
+              <strong>üè¢ <?= htmlspecialchars($v['name']) ?></strong>
+            </td>
+            <td>
+              <span style="background: var(--primary-gradient); color: white; padding: 0.25rem 0.75rem; border-radius: 20px; font-weight: 600;">
+                üë• <?= (int)$v['capacity'] ?> people
+              </span>
+            </td>
+          </tr>
+        <?php endforeach; ?>
+      </tbody>
+    </table>
+  </div>
+  <?php endif; ?>
+</section>
+
+
+
+==== config/config.ini ====
+[database]
+; host = 127.0.0.1
+; name = ks9700
+; user = ks9700
+; pass = "Mugil2-converter"
+
+host = 127.0.0.1
+name = KarloDB
+user = Viktor
+pass = 2174
+
+
+
+==== Index.php ====
+<?php
+declare(strict_types=1);
+session_start();
+
+final class Index
+{
+    public static function init(): void
+    {
+        // Errors (dev mode)
+        error_reporting(E_ALL);
+        ini_set('display_errors', '1');
+
+        // Paths
+        define('ROOT_PATH', __DIR__);
+        define('APP_PATH', ROOT_PATH . '/app');
+        define('CORE_PATH', ROOT_PATH . '/core');
+        define('VIEW_PATH', APP_PATH . '/view');
+        define('PUBLIC_PATH', ROOT_PATH . '/public');
+        define('CONFIG_PATH', ROOT_PATH . '/config');
+
+        // Title
+        define('PROJECT_TITLE', 'Event Horizon');
+
+        // BASE_PATH works both on XAMPP and Solace (no trailing slash)
+        $scriptDir = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '/')), '/');
+        define('BASE_PATH', $scriptDir === '' ? '' : $scriptDir);
+
+        // Autoload (controllers, models, core)
+        spl_autoload_register(function (string $class): void {
+            $candidates = [
+                APP_PATH . '/controller/' . $class . '.php',
+                APP_PATH . '/model/' . $class . '.php',
+                CORE_PATH . '/' . $class . '.php',
+            ];
+            foreach ($candidates as $file) {
+                if (is_readable($file)) {
+                    require_once $file;
+                    return;
+                }
+            }
+        });
+
+        self::handle();
+    }
+
+    private static function handle(): void
+    {
+        $controllerParam = $_GET['controller'] ?? 'user';
+        $action = $_GET['action'] ?? 'login';
+
+        $controllerClass = ucfirst(strtolower((string)$controllerParam)) . 'Controller';
+
+        if (!class_exists($controllerClass)) {
+            self::renderError("Controller '{$controllerClass}' not found.");
+            return;
+        }
+
+        $controller = new $controllerClass();
+
+        if (!method_exists($controller, $action)) {
+            self::renderError("Action '{$action}' not found on {$controllerClass}.");
+            return;
+        }
+
+        $controller->$action();
+    }
+
+    private static function renderError(string $message): void
+    {
+        include VIEW_PATH . '/inc/header.php';
+        echo "<div class='alert-error' style='margin:1rem 0'>{$message}</div>";
+        include VIEW_PATH . '/inc/footer.php';
+    }
+}
+
+Index::init();
+
+
+
+==== public/css/style.css ====
+:root {
+  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --bg-main: #fafbff;
+  --bg-secondary: #ffffff;
+  --text-primary: #2d3748;
+  --text-secondary: #718096;
+  --accent-purple: #667eea;
+  --accent-pink: #f093fb;
+  --success: #48bb78;
+  --warning: #ed8936;
+  --danger: #f56565;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+  --shadow-lg: 0 10px 20px rgba(0,0,0,0.15);
+  --shadow-xl: 0 20px 40px rgba(0,0,0,0.2);
+  --border-light: #e2e8f0;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap');
+
+* { 
+  box-sizing: border-box; 
+  margin: 0; 
+  padding: 0; 
+}
+
+html, body {
+  background: var(--bg-main);
+  color: var(--text-primary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.6;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 400px;
+  background: var(--primary-gradient);
+  opacity: 0.05;
+  z-index: -1;
+  transform: skewY(-3deg);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  width: 100%;
+}
+
+/* HEADER - Completely redesigned */
+.site-header {
+  background: var(--bg-secondary);
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 2px solid transparent;
+  background-image: var(--primary-gradient);
+  background-size: 100% 2px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+}
+
+.header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 0;
+}
+
+.brand-link {
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: 1.75rem;
+  font-weight: 900;
+  text-decoration: none;
+  letter-spacing: -0.5px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: transform 0.3s ease;
+}
+
+.brand-link:hover {
+  transform: scale(1.05);
+}
+
+.brand-link::before {
+  content: 'üåå';
+  font-size: 1.5rem;
+  -webkit-text-fill-color: initial;
+}
+
+.main-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.main-nav a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 50px;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  position: relative;
+  overflow: hidden;
+}
+
+.main-nav a::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--primary-gradient);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+}
+
+.main-nav a:hover {
+  color: white;
+  transform: translateY(-2px);
+}
+
+.main-nav a:hover::before {
+  opacity: 1;
+}
+
+.user-pill {
+  padding: 0.5rem 1.25rem;
+  background: var(--primary-gradient);
+  color: white;
+  border-radius: 50px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  box-shadow: var(--shadow-md);
+}
+
+/* FOOTER - Redesigned */
+.site-footer {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  margin-top: auto;
+  padding: 2rem;
+  color: white;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.site-footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  opacity: 0.1;
+}
+
+.site-footer .container {
+  position: relative;
+  z-index: 1;
+}
+
+.site-footer small {
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+/* CARD - Completely new design */
+.card {
+  background: var(--bg-secondary);
+  border-radius: 24px;
+  padding: 2.5rem;
+  box-shadow: var(--shadow-lg);
+  max-width: 480px;
+  margin: 4rem auto;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--border-light);
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: var(--secondary-gradient);
+  opacity: 0.03;
+  transform: rotate(45deg);
+}
+
+.card h2 {
+  margin-bottom: 1.5rem;
+  font-size: 2rem;
+  font-weight: 800;
+  text-align: center;
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.5px;
+}
+
+/* FORM - New modern design */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  position: relative;
+  z-index: 1;
+}
+
+.form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.form input {
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
+  border: 2px solid var(--border-light);
+  background: var(--bg-main);
+  color: var(--text-primary);
+  outline: none;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.form input::placeholder {
+  color: #cbd5e0;
+  font-weight: 400;
+}
+
+.form input:focus {
+  border-color: var(--accent-purple);
+  background: white;
+  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+  transform: translateY(-2px);
+}
+
+.form button {
+  background: var(--primary-gradient);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  font-weight: 700;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+
+.form button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.form button:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-xl);
+}
+
+.form button:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.form button:active {
+  transform: translateY(-1px);
+}
+
+/* TABLE - Modern clean design */
+.table-wrap { 
+  overflow-x: auto; 
+  margin-top: 2rem;
+  background: white;
+  border-radius: 16px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-light);
+}
+
+.table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.table thead {
+  background: var(--primary-gradient);
+}
+
+.table th {
+  padding: 1.25rem 1.5rem;
+  text-align: left;
+  color: white;
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: none;
+}
+
+.table th:first-child {
+  border-top-left-radius: 16px;
+}
+
+.table th:last-child {
+  border-top-right-radius: 16px;
+}
+
+.table td {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border-light);
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.table tbody tr {
+  transition: all 0.3s ease;
+}
+
+.table tbody tr:hover {
+  background: linear-gradient(90deg, rgba(102, 126, 234, 0.05) 0%, rgba(240, 147, 251, 0.05) 100%);
+  transform: scale(1.01);
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.table a {
+  color: var(--accent-purple);
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.table a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--primary-gradient);
+  transition: width 0.3s ease;
+}
+
+.table a:hover::after {
+  width: 100%;
+}
+
+/* ALERTS - New design */
+.alert {
+  padding: 1.25rem 1.5rem;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  border-left: 4px solid var(--accent-purple);
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.alert::before {
+  content: '‚ÑπÔ∏è';
+  font-size: 1.25rem;
+}
+
+.alert-error {
+  padding: 1.25rem 1.5rem;
+  background: linear-gradient(135deg, rgba(245, 101, 101, 0.1) 0%, rgba(237, 137, 54, 0.1) 100%);
+  border-left: 4px solid var(--danger);
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+  color: var(--danger);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.alert-error::before {
+  content: '‚ö†Ô∏è';
+  font-size: 1.25rem;
+}
+
+/* Hint text */
+.hint {
+  text-align: center;
+  margin-top: 1.5rem;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* Additional modern touches */
+main.container {
+  padding-top: 2rem;
+  padding-bottom: 3rem;
+  min-height: calc(100vh - 200px);
+}
+
+/* Animations */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card {
+  animation: slideIn 0.5s ease-out;
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 1rem;
+  }
+  
+  .header-row {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem 0;
+  }
+  
+  .main-nav {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .card {
+    margin: 2rem 1rem;
+    padding: 2rem 1.5rem;
+  }
+  
+  .table {
+    font-size: 0.9rem;
+  }
+  
+  .table th, .table td {
+    padding: 0.75rem;
+  }
+}
+
+/* Hover effects for interactive elements */
+a, button {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+/* Loading animation */
+@keyframes pulse {
+  0% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.6;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-main);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary-gradient);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--secondary-gradient);
+}
+
+
+
+==== public/img/avatar.jpg ====
+ˇÿˇ‡ JFIF  XX  ˇ€ Ñ 		
+ $.' ",#(7),01444'9=82<.342			2!!22222222222222222222222222222222222222222222222222ˇ¬  » »" ˇƒ /                           ˇ⁄     ø¿            1åï_:Õπ«B*˚…      *caUltdó≈N-O“ß-∑•Ø¶…pY<Â4-ê    bë…˝HdhSÌŒRÓ•Å%.˚Òd≤Z÷ÿKÇOŒ}    ÒÔRP0ŸıN}gÙÖ#w ﬂX^4p‹Èæ-ô“<ıy&ÿ   V◊…œEï4™∞ŒØ“√R⁄¡¨}‰w≠È“™˘˜~≥{”ü∫Q=    yısPƒÊﬁÛË  *œAsQ±Ëm¯    kevË}0t˙üùíVªVIqÍx∂üÏß     c%˘˛É«≠AÖﬁüvVˆY
+ú˚¬3LS)è…   ù∏©‚{$ç…
+æ∫ölLŸÕkaÎ∏MCû∫ûŒÑ•ÆöXÒïúó   ı√7JÁ+<˘}:Ll<M—DaÁ ã3û˙≠-*ZÈØä÷S,¸I‡                     ?ˇƒ 2        01 2567!"A@`8ˇ⁄   ˇ î} Œ1©›>tãfÛY µc'ã©EgÈ≈Nb≤âé@=Ù›ænÉ.Vyˆq#Å^ƒ«.π µ bß$ã®≈»3ìjWL]"Âø˙7Ï∞¬¨e#£HG“Òı€ÆTz/\ /”7$ìµÏí#ôZFáNøMçdüø´76˛ŒâÂ “D:v
+lc‘…ãn¬5⁄ıπıÀÆ+z2,ú P2√Iìéí!À˜Ú∆K$œ®N´GåàÜ˝a{8¶ ·íÂÌÃ€à«C˙¡È„˝m˝S≤\Ω_ïõÅ{U2^nCäå±>K4ÍeÅôT'›æZìß’úI9«U‘f?πŸ’Êäª\û‹Áı«2m~:M…Ì2pè[âîkëk®√ºas¨+ÀBµ'p´7í˛%s‹ÃRÓ,W÷’ˆ[®\¶ı‹E4‡¯¢cJ&ß`„;jõ€;Ö[Î‹˝°”ˆ8Ôq¡∆hŸGµá
+∏–îJa)Ä@ﬁ≠Í6H)äë˜GK∏Æﬂ◊ﬁÓô{j®Tí2áãã—5ü.U¿sÖ≤X”∂ŸY#D<0çm){JÚéS£„õ´iDZPîlò
+î±†≠±RE0ÄdÙMXÀÑïnÄíÖY"®A‹Ω´:¶Bß0±ca 	iz_ú£π
+#Î·√„î∫3Õw W«à')
+P-w[¿√±!Îõ@%YË¸ıuLΩNc|›´*"‚≠.ÅCsaÛ≥GáŒ %( ˙¯R-j”lÌ‰ Q:Ï'cRêçrGµ-.¬5Y	'$n÷ÌkVÂgq&râ@=sx˘s÷£«Á≠"-Í—67h‰)»bò Kè5G1åb„ K¨1†.í—¬^R n;≠7HÃ¶õÈÂégè*êÏŒŸ¥+SºU1_~´˙ÅFÍfÆ^èB#vx™f¿˝7˜Àèı)è*íÏ»ŸÃ+RÖÀH√&£Ëëg∂√∞˙“aç?tâéââêï5∑1ÑbÃB§ † ^ﬁlÇZ⁄“ƒœt…ë€•qßE_c»LSåSånçÇq 4á«ï±ärm◊∞A†ê«“ßS•Ø≤¶ÇZb⁄ÓƒÛsìπp≠7∂÷ùDÆ Cc˚:‘++»]8‰ŒU!Äƒ¯Œr¶CÊñˇ gZ˚fg_K©N≠7©Vöƒ† swrÜ7-≠®I∆§ô«π=ÕI`Ä±ë …ÛYâªf∫k∑¯^æk—GoM˘'π∂¨0¬/‰1v7-Q†……îßôÔﬁq§U…1qøìîØxïÒåN¢l‡3Ã[Ç9ÿıŸ*√ T§¿µÅÄè∑¢99˝™«ï˛@©FÄ˘õxˆyãnC'ª’JïÔ->)è‘QùESS˘…OÙTHã&d‘!NI¨CPô1î+0Y˜Ä;ãÌ˛>Às˝f;ïèÄ€Ì	àj∆*¶bgÎ$ëL©¶BêùÁí£»SΩv›±QY'ïdT"âhD 7’_;œ&I∏„9ëüáà9I%(Õ°ö<l˝π\4píËÈixÊÓ —gÌSsßí,cÄÇı„v¿W≠LœÕï¬"ŸúÉ)Ïù∑r^◊ ∏ Î˛=Ä€√8Õ;å®7h—S$Òbqa-^–8∫√3NÊ(e™ôU$\˘(◊N˘yµC®(KÀ»LIÆC‚’ù÷2ªÍ®:Í∂÷@ ˜ı˚·Æ! Ñ‡™D∏H`{òN@ø3∞ v¯Å˙6±ˇ „ÿ >Å©¸Ï¿ødæ‘ˇ €íz¬Û	WÎ÷…e“:©TÚUzœmEã8>’ˇ Û‘VÉ\B˛—–#™Ÿœ\V’©Õ“·˚Ì˘ûﬂ?@Ü’ÒÙáo√jYBáBò^\
+˙!Ëˇ S·ΩvL◊7lÒ≠çõ§íY*Ç-–‚“-M6˙ø˛zä–kà_ß@Î'E®Œ°`m¸GáÔ∑Ê{y>ì!våèm·™'K^QL©•dnDÎlEV„ò=Xuu©6π◊è∫ÇäÅÜÆ«!b‘òkÏ∫ïe•F∫ﬁ!°Ã°LBú¢S 	e0’Ü.egUb¢ﬂb„‘^--(È72z≥„yiºîŒ ›€"4÷R¢…^∆•Â™≤“÷ü∆ÕÎ†™%{ãÈRò…“¨˘ˇƒ F 	     !1AQaÅ02që°"#BRbr±≤ Çí≥¬$34@C`s¢¡—“Sctˇ⁄  ? ˛N¥ì8EÕá•Úqü¨ÿù¿ÿÊ; ﬁmˇ âÈÛXgªƒﬁ%¨})îå}eƒo~¨ê∏e;«ÏC\Ø7ˆ»Œ}ëæñ“˜z™¬ÉHç}€Õì≠8∆bê£{êä˜"èçΩ^NO˜±¿ò»Øs©¯Ÿ˙±MÑdˆ1*w0±"∑ª≠Zàso‹lpU Ûsü`ú«Ÿ;´˚ØÁÖ?´)á∂Gp«9Æ]⁄‚¯Ω·é ∞Œkú.úÌÖîd•ŒL•—ñF~¡‰çG?“aì%Œs\ï9Ú	Õÿ|ì®gµrÔ7=‹åIQúS9]◊"˛oxc˙ ò˚`wåsÉ”7ö∫∆}9Nm¬ÑùÇ‹Ì<≤Mè8õ¨k¨
+ÉM$ÅÆ—í∑[µpâ?ÿÁ'va–HBﬁÆ’¬Tˇ aúŸç∏A÷x§áo7XSP4&ö"ÀÊØQèBQüq®#aÈny0"Õ<îØp*;Ìvâgæ≤˛ÒÕrk⁄rúˆØ4 
+íl„)n0m¥É6ªRô|Ê\Æ⁄ÂYS\g π√i;}Å°PÉ«yâßπ3~Ì≈2©ÿr\}k_2†t9ñxÎNwtä∞Z6û˛’÷M∏∏Ó¥˜ó»ÿÄ‰®ÓèÉZ0F≥íw «∂üCÑ—ö@≤ëîwÇß∂ºp^S/jí√Ïìi˙ëÎFÔ({Ï¿0:¡ƒtq‹f`vÑkA¡™˝≥¯EàÒÂ√(J—á«„Ù2Êîç!h´Ò>`-?∞cØ™≥‹`c⁄Ptr\¶A⁄P⁄Û¡£$kÎƒ,+ƒ@–…•@⁄(⁄6⁄QUt>h#H8ÒD*ŒÁ¿$Ë "ªƒMLqä–¶§ùßgªpi,5uG·6éÂ
+–É£"Ñ"Õ4‹’”STÔ*ΩˆK√<[c)|áQñ~A∂∏ Ì©ÿ-"ëÊNU‹Y™{¨Á)ÆwÜ% –Ç=‡N€œX˚Ûˇ k! [ù›àA≤¥ t∂—†Hﬁ‰ù ¿Qñáæ∂Z≥@√œ†ŸLvPÏ6{¬ºª#O)º7ŸfáÉ÷ö(|æ‚Õ›`( –:K‡Rd_BxÛ‡)˙¶…ªä(∆2sÓ±#±Ö§Ó◊yE›Nf#◊?”€–FﬁnÒä¬åÏÆ?´∂œªr0∆BM*=Ê v)µÃ17ß<ï©‹¨:YT2ë˙9UøŒ¬m<ºïÓ9D2”JëJÎ:,¿¿‘Ø†PIbh mºï“8≈Ú”BÅZj:m ö@?I!Î7¯ÿMPÄº†Ù	ıÜÉ∏ÏâåjÏßï∫ùHŒWfq¢£JπI,lXl#ÈDπO,åTm&“∞çùTÚ∑≤N
+pª3ù4Zt°vCËÉÎ'p€”™—/q≠r©ò8Ùáà◊¢Ã¯∞[§›æ©˚&⁄fª˘ÿŒ⁄uáçè£$¬6Ójz‹Â)Ò∞ÙcòH›ÀSmﬁ<‘cm:«¬ ÿ1+§=û±˚FÃ¥{‹ãLùa¢<NΩ±0£+
+Ç5f©/r~LW›≈|-°o7P|TèÖµÚ^Îi[µ‘'·eƒ=ı˘A_w≤ä*®†`Èÿ—L“™u
+õ8ÆåX å¸uß$/Iï]TÆ~6≈Vy’	‹Mõ´$NOaM@∞º ÆköäMq‚rBô•T ¶™úmëóÀ	FNº¨‘€d4c™‡Fá£Áçü˘f‹¬/óäˇ x‰¶u4&0•ä◊iª-Õ“Ù◊rã…‰1H”P\ÔvY’ä •jt–57A…ìØ%I˛÷å$í: ]›ÎAéE3v3Oäö1Up4
+oŸ≈ ‹qß∑≈ÀMü›[puﬁÒN§e.ø7[û.oÂéèû7›õsæ^.xﬂvm˘Ç€Úã¸âni/»mtÇÔ+$t `‡+Öß?:x‚Æ
+I©‚+q˘¯Ñ”|´n‡û*˙Gë/Ù≥ç÷Áã˜c£Áç˜f‹¬/óãû7›õÖk]>Hß}èø»ñ7I~CicªáÜE|∫‘‚—ﬁ/jâT"Ä ‚Ân??+?»-7GsôÄˇ ™¢Ω™Œ7[û/›ééÔ;J∆X
+ëÖ«(¢¢_'P£P akΩ›#ñ@≈É∞&ßæ¡Ñ∞Ly7°¶ëBAçïÚÇÛô`Î”?ˇ V—’§ïÖéqf#GfÄà°`E•$*õ√¡$j}•P¥àcAJD§’çN,∆ôˇ œwféFnPÚmSJ
+vc≈uyÕ‡∞)@†:≠wÜ¨N@í09´B2Üm6ºN≤°ªñ  †cP1√¯Gˇƒ                pˇ⁄ ? )ˇƒ                pˇ⁄ ? )ˇŸ
+
+
